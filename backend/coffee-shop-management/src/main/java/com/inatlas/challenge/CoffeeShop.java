@@ -2,28 +2,45 @@ package com.inatlas.challenge;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CoffeeShop {
     private List<Product> orders = new ArrayList<>();
 
-    public void takeOrder(String product, Integer qtt) {
-        this.orders.add(new Product(product, qtt));
+
+    public void takeOrder(ProductType product, Integer quantity) {
+        this.orders.add(new Product(product, quantity));
     }
 
     public Double printReceipt() {
         System.out.println("======================================");
-        boolean hasMoreThanOneLatte = this.orders.stream().anyMatch(p -> p.getName().equals("Latte") && p.getQtt() > 1);
+
+        //Detects 2 Lattes for 1 free espresso promotion
+        int totalLattes = this.orders.stream()
+                .filter(p -> p.getName().equals(ProductType.LATTE)) //Filters Latte products
+                .reduce(0, (count, p) -> count + p.getQuantity(), Integer::sum); //Summation of quantities of Latte products
+
+        boolean hasMoreThanOneLatte = totalLattes > 1;
         if (hasMoreThanOneLatte) {
+            AtomicInteger maxFreeEspressos = new AtomicInteger(totalLattes / 2);
             this.orders.forEach(p -> {
-                if (p.getName().equals("Espresso")) {
-                    p.setDiscount(true);
+                if (p.getName().equals(ProductType.ESPRESSO)) {
+                    if (maxFreeEspressos.intValue() > 0) {
+                        p.setDiscount(true); //Apply promotion for espresso while we have enough free espressos
+                        maxFreeEspressos.getAndDecrement();
+                    } else {
+                        p.setDiscount(false); //Removes promotion for next espressos with promotion applied before
+                    }
                 }
             });
         }
+
+        //Calculates order total price
         Double total = this.orders.stream().map(p -> {
             System.out.println(p);
             return Double.valueOf(p.getPrice().split("\\$")[1]);
         }).reduce(0.0, (a, b) -> a + b);
+
         System.out.println("----------------");
         System.out.println("Total: $" + total);
         System.out.println("======================================");
