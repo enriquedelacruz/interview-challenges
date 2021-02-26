@@ -10,7 +10,7 @@ public class CoffeeShop {
         this.orders.add(new Product(product, qtt));
     }
 
-    public void printReceipt() {
+    public Double printReceipt() {
         System.out.println("======================================");
         boolean hasMoreThanOneLatte = this.orders.stream().anyMatch(p -> p.getName().equals("Latte") && p.getQtt() > 1);
         if (hasMoreThanOneLatte) {
@@ -27,6 +27,8 @@ public class CoffeeShop {
         System.out.println("----------------");
         System.out.println("Total: $" + total);
         System.out.println("======================================");
+
+        return total;
     }
 
     public void printMenu() {
