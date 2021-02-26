@@ -14,7 +14,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return name.getName() + " " + getPrice();
+        return name.getName() + " " + getPrice() + (discount?" - promotion":"");
     }
 
     public Integer getQuantity() {
