@@ -14,7 +14,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return name + " " + getPrice();
+        return name.getName() + " " + getPrice();
     }
 
     public Integer getQuantity() {
@@ -28,8 +28,8 @@ public class Product {
     public String getPrice() {
         Double price = 0.0;
 
-        if (!discount && Menu.products.get(this.name) != null) {
-            price = Menu.products.get(this.name) * this.quantity;
+        if (!discount) {
+            price = this.name.getPrice() * this.quantity;
         }
 
         return "$ " +  price;
