@@ -1,13 +1,15 @@
 package com.inatlas.challenge;
 
+
 public class Product {
-    private String name;
-    private Integer qtt;
+
+    private ProductType name;
+    private Integer quantity;
     private boolean discount;
 
-    public Product(String name, Integer qtt) {
+    public Product(ProductType name, Integer qtt) {
         this.name = name;
-        this.qtt = qtt;
+        this.quantity = qtt;
     }
 
     @Override
@@ -15,29 +17,22 @@ public class Product {
         return name + " " + getPrice();
     }
 
-    public Integer getQtt() {
-        return qtt;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    public String getName() {
+    public ProductType getName() {
         return name;
     }
 
     public String getPrice() {
-        if (discount) {
-            return "$ 0.0";
+        Double price = 0.0;
+
+        if (!discount && Menu.products.get(this.name) != null) {
+            price = Menu.products.get(this.name) * this.quantity;
         }
 
-        if ("Sandwich".equals(this.name)) {
-            return "$ 10.10";
-        }
-        if ("Latte".equals(this.name)) {
-            return "$ 5.3";
-        }
-        if ("Espresso".equals(this.name)) {
-            return "$ 4";
-        }
-        return "";
+        return "$ " +  price;
     }
 
     public void setDiscount(boolean discount) {
