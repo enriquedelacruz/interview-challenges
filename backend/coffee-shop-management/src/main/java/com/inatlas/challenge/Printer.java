@@ -78,7 +78,7 @@ public class Printer {
         StringBuilder sbMenu = new StringBuilder(createHeader(MENU_LABEL, Arrays.asList(new String[] { PRODUCT_LABEL, PRICE_LABEL})));
 
         //Body
-        sbMenu.append(Arrays.stream(ProductType.values())
+        sbMenu.append(Arrays.stream(Menu.values())
                 .map(p -> {
                     return p.getName()
                             + repeatString(".", COLUMN_WIDTH - p.getName().length() + 1)

@@ -8,21 +8,21 @@ public class CoffeeShop {
     public static final String CURRENCY = "$";
     private List<Product> orders = new ArrayList<>();
 
-    public void takeOrder(ProductType product, Integer quantity) {
+    public void takeOrder(Menu product, Integer quantity) {
         this.orders.add(new Product(product, quantity));
     }
 
     public void applyEspressoPromotion() {
         //Detects 2 Lattes for 1 free espresso promotion
         int totalLattes = this.orders.stream()
-                .filter(p -> p.getName().equals(ProductType.LATTE)) //Filters Latte products
+                .filter(p -> p.getName().equals(Menu.LATTE)) //Filters Latte products
                 .reduce(0, (count, p) -> count + p.getQuantity(), Integer::sum); //Summation of quantities of Latte products
 
         boolean hasMoreThanOneLatte = totalLattes > 1;
         if (hasMoreThanOneLatte) {
             AtomicInteger maxFreeEspressos = new AtomicInteger(totalLattes / 2);
             this.orders.forEach(p -> {
-                if (p.getName().equals(ProductType.ESPRESSO)) {
+                if (p.getName().equals(Menu.ESPRESSO)) {
                     if (maxFreeEspressos.intValue() > 0) {
                         p.setDiscount(true); //Apply promotion for espresso while we have enough free espressos
                         maxFreeEspressos.getAndDecrement();

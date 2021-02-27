@@ -32,16 +32,16 @@ public class PrinterTest {
         //This should print an empty receipt with total = 0.0
 
         List<Product> orders = Arrays.asList(new Product[]{
-                new Product(ProductType.ESPRESSO, 1)
+                new Product(Menu.ESPRESSO, 1)
         });
         Printer.getInstance().printReceipt(orders, 5.0);
         //This should print a receipt with 1 espresso 4.0 and total 5.0
 
         orders = Arrays.asList(new Product[]{
-                new Product(ProductType.ESPRESSO, 250),
-                new Product(ProductType.SANDWICH, 10),
-                new Product(ProductType.LATTE, 15),
-                new Product(ProductType.ESPRESSO, 100)
+                new Product(Menu.ESPRESSO, 250),
+                new Product(Menu.SANDWICH, 10),
+                new Product(Menu.LATTE, 15),
+                new Product(Menu.ESPRESSO, 100)
         });
         Printer.getInstance().printReceipt(orders, 5.0);
         //This should print a receipt with all products above and total 5.0

@@ -1,13 +1,13 @@
 package com.inatlas.challenge;
 
-public enum ProductType {
+public enum Menu {
     SANDWICH ("Sandwich", 10.10),
     LATTE    ("Latte",    5.3),
     ESPRESSO ("Espresso", 4.0);
 
     String name;
     double price;
-    ProductType(String n, double p) {
+    Menu(String n, double p) {
         name = n;
         price = p;
     }

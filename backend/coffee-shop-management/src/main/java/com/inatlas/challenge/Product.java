@@ -3,11 +3,11 @@ package com.inatlas.challenge;
 
 public class Product {
 
-    private ProductType name;
+    private Menu name;
     private Integer quantity;
     private boolean discount;
 
-    public Product(ProductType name, Integer qtt) {
+    public Product(Menu name, Integer qtt) {
         this.name = name;
         this.quantity = qtt;
     }
@@ -21,7 +21,7 @@ public class Product {
         return quantity;
     }
 
-    public ProductType getName() {
+    public Menu getName() {
         return name;
     }
 
