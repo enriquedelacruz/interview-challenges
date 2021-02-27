@@ -6,7 +6,13 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class CoffeeShopTest {
-    
+
+    @Test
+    public void testPrintMenu() {
+        CoffeeShop coffeeShop = new CoffeeShop();
+        coffeeShop.printMenu();
+    }
+
     @Test
     public void testTakeMyFirstOrder(){
         CoffeeShop coffeeShop = new CoffeeShop();

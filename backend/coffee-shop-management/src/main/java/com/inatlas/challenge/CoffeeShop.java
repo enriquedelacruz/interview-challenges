@@ -5,16 +5,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CoffeeShop {
+    public static final String CURRENCY = "$";
     private List<Product> orders = new ArrayList<>();
-
 
     public void takeOrder(ProductType product, Integer quantity) {
         this.orders.add(new Product(product, quantity));
     }
 
-    public Double printReceipt() {
-        System.out.println("======================================");
-
+    public void applyEspressoPromotion() {
         //Detects 2 Lattes for 1 free espresso promotion
         int totalLattes = this.orders.stream()
                 .filter(p -> p.getName().equals(ProductType.LATTE)) //Filters Latte products
@@ -34,21 +32,32 @@ public class CoffeeShop {
                 }
             });
         }
+    }
 
+    public Double calculateTotal() {
         //Calculates order total price
         Double total = this.orders.stream().map(p -> {
-            System.out.println(p);
-            return Double.valueOf(p.getPrice().split("\\$")[1]);
+            return p.getPrice();
         }).reduce(0.0, (a, b) -> a + b);
 
-        System.out.println("----------------");
-        System.out.println("Total: $" + total);
-        System.out.println("======================================");
+        return total;
+    }
+
+    public Double printReceipt() {
+        //Calculate promotion
+        applyEspressoPromotion();
+
+        //Calculate total amount of receipt
+        Double total = calculateTotal();
+
+        //Print receipt by Printer
+        Printer.getInstance().printReceipt(this.orders, total);
 
         return total;
     }
 
     public void printMenu() {
         // Print whole menu
+        Printer.getInstance().printMenu();
     }
 }

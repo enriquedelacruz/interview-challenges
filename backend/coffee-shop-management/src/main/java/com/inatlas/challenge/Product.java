@@ -25,14 +25,14 @@ public class Product {
         return name;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         Double price = 0.0;
 
         if (!discount) {
             price = this.name.getPrice() * this.quantity;
         }
 
-        return "$ " +  price;
+        return price;
     }
 
     public void setDiscount(boolean discount) {
