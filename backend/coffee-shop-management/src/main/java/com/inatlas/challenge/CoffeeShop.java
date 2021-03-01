@@ -1,57 +1,45 @@
 package com.inatlas.challenge;
 
+import com.inatlas.challenge.promotion.AbstractPromotion;
+import com.inatlas.challenge.promotion.EspressoPromotion;
+import com.inatlas.challenge.promotion.TotalProductsPromotion;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CoffeeShop {
+
     public static final String CURRENCY = "$";
     private List<Product> orders = new ArrayList<>();
+    private List<AbstractPromotion> availablePromotions = Arrays.asList(
+            new EspressoPromotion("1FreeEspresso x 2Lattes"),
+            new TotalProductsPromotion("5%off x 8products")
+    );
+    private Double total = 0.0;
+    private String appliedPromotion;
 
     public void takeOrder(Menu product, Integer quantity) {
         this.orders.add(new Product(product, quantity));
     }
 
-    public void applyEspressoPromotion() {
-        //Detects 2 Lattes for 1 free espresso promotion
-        int totalLattes = this.orders.stream()
-                .filter(p -> p.getName().equals(Menu.LATTE)) //Filters Latte products
-                .reduce(0, (count, p) -> count + p.getQuantity(), Integer::sum); //Summation of quantities of Latte products
-
-        boolean hasMoreThanOneLatte = totalLattes > 1;
-        if (hasMoreThanOneLatte) {
-            AtomicInteger maxFreeEspressos = new AtomicInteger(totalLattes / 2);
-            this.orders.forEach(p -> {
-                if (p.getName().equals(Menu.ESPRESSO)) {
-                    if (maxFreeEspressos.intValue() > 0) {
-                        p.setDiscount(true); //Apply promotion for espresso while we have enough free espressos
-                        maxFreeEspressos.getAndDecrement();
-                    } else {
-                        p.setDiscount(false); //Removes promotion for next espressos with promotion applied before
-                    }
-                }
-            });
-        }
-    }
-
     public Double calculateTotal() {
-        //Calculates order total price
-        Double total = this.orders.stream().map(p -> {
-            return p.getPrice();
-        }).reduce(0.0, (a, b) -> a + b);
+        AbstractPromotion cheapestPromotion = availablePromotions.stream()
+                .min(Comparator.comparingDouble(x -> x.calculateTotal(this.orders))).get();
+
+        this.appliedPromotion = cheapestPromotion.getName();
+        this.total = cheapestPromotion.calculateTotal(this.orders);
 
         return total;
     }
 
     public Double printReceipt() {
-        //Calculate promotion
-        applyEspressoPromotion();
-
         //Calculate total amount of receipt
         Double total = calculateTotal();
 
         //Print receipt by Printer
-        Printer.getInstance().printReceipt(this.orders, total);
+        Printer.getInstance().printReceipt(this.orders, this.total, this.appliedPromotion);
 
         return total;
     }
@@ -60,4 +48,5 @@ public class CoffeeShop {
         // Print whole menu
         Printer.getInstance().printMenu();
     }
+
 }

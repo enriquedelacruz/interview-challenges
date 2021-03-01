@@ -14,7 +14,7 @@ public class CoffeeShopTest {
     }
 
     @Test
-    public void testTakeMyFirstOrder(){
+    public void testTakeMyFirstOrder() {
         CoffeeShop coffeeShop = new CoffeeShop();
         coffeeShop.printMenu();
         coffeeShop.takeOrder(Menu.LATTE, 1);
@@ -41,7 +41,7 @@ public class CoffeeShopTest {
     }
 
     @Test
-    public void testTakeMySecondOrder(){
+    public void testTakeMySecondOrder() {
         CoffeeShop coffeeShop = new CoffeeShop();
         coffeeShop.printMenu();
         coffeeShop.takeOrder(Menu.LATTE, 2);
@@ -53,7 +53,7 @@ public class CoffeeShopTest {
     }
 
     @Test
-    public void testTakeMyThirdOrder3(){
+    public void testTakeMyThirdOrder3() {
         CoffeeShop coffeeShop = new CoffeeShop();
         coffeeShop.printMenu();
         coffeeShop.takeOrder(Menu.LATTE, 1);
@@ -66,7 +66,7 @@ public class CoffeeShopTest {
     }
 
     @Test
-    public void testTakeMyFourthOrder(){
+    public void testTakeMyFourthOrder() {
         CoffeeShop coffeeShop = new CoffeeShop();
         coffeeShop.printMenu();
         coffeeShop.takeOrder(Menu.LATTE, 2);
@@ -92,4 +92,28 @@ public class CoffeeShopTest {
         // Total should be $35.3 ( 5.3 + 5.3 + 4 + 4 + 10.10 + 5.3 + 5.3 + 4 - 8 [promotion for 4 lattes] = 35.3 )
         assertThat(total, is(35.3));
     }
+
+    @Test
+    public void testPromotions() {
+        CoffeeShop coffeeShop = new CoffeeShop();
+        coffeeShop.printMenu();
+
+        coffeeShop.takeOrder(Menu.LATTE, 2);
+        coffeeShop.takeOrder(Menu.ESPRESSO, 1);
+        coffeeShop.takeOrder(Menu.ESPRESSO, 1);
+        coffeeShop.takeOrder(Menu.SANDWICH, 6);
+        // Total of order should be $59.0 ( 5.3 + 5.3 + 4 + 4 + 10.10 x6 = 79.2 )
+        // Total after discount of 1espressox2lattes should be $75.2 (the cheapest)
+        // Total after discount of 5% should be $75.24
+        Double total = coffeeShop.printReceipt();
+        assertThat(total, is(75.2));
+
+        coffeeShop.takeOrder(Menu.SANDWICH, 4);
+        // Total of order should be $119.6 ( 5.3 + 5.3 + 4 + 4 + 10.10 x10 = 119.6 )
+        // Total after discount of 1espressox2lattes should be $115.6
+        // Total after discount of 5% should be $113.62 (the cheapest)
+        total = coffeeShop.printReceipt();
+        assertThat(total, is(113.62));
+    }
+
 }

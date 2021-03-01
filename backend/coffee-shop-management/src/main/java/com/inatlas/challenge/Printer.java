@@ -16,6 +16,7 @@ public class Printer {
     private static final String PRODUCT_LABEL = "Product";
     private static final String PRICE_LABEL = "Price";
     private static final String TOTAL_LABEL = "Total";
+    private static final String PROMOTION_LABEL = "* Promotion";
     private static final String CURRENCY = CoffeeShop.CURRENCY;
 
     private static Printer printer;
@@ -30,8 +31,8 @@ public class Printer {
         return printer;
     }
 
-    public void printReceipt(List<Product> orders, double total) {
-        print(createReceipt(orders, total));
+    public void printReceipt(List<Product> orders, double total, String appliedPromotion) {
+        print(createReceipt(orders, total, appliedPromotion));
     }
 
     public void printMenu() {
@@ -49,7 +50,7 @@ public class Printer {
     }
 
 
-    private String createReceipt(List<Product> orders, double total) {
+    private String createReceipt(List<Product> orders, double total, String promotionApplied) {
         //Header
         StringBuilder sbReceipt = new StringBuilder(createHeader(RECEIPT_LABEL, Arrays.asList(new String[] { PRODUCT_LABEL, PRICE_LABEL})));
 
@@ -64,8 +65,15 @@ public class Printer {
                     })
                     .collect(Collectors.joining("\n")) + "\n");
         }
+
+        //Total
         sbReceipt.append(repeatString("-", COLUMN_WIDTH * 2) + "\n");
         sbReceipt.append(TOTAL_LABEL + repeatString(".", COLUMN_WIDTH - TOTAL_LABEL.length() + 1) + CURRENCY + " " + total + "\n");
+
+        //Promotion
+        if (promotionApplied != null && !promotionApplied.isEmpty()) {
+            sbReceipt.append(PROMOTION_LABEL + ": " + promotionApplied + "\n");
+        }
 
         //Footer
         sbReceipt.append(repeatString("=", COLUMN_WIDTH * 2) + "\n");

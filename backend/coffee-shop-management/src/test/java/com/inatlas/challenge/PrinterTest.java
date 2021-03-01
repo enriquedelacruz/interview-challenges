@@ -28,13 +28,13 @@ public class PrinterTest {
 
     @Test
     public void testPrintReceipt() {
-        Printer.getInstance().printReceipt(null, 0.0);
+        Printer.getInstance().printReceipt(null, 0.0, "");
         //This should print an empty receipt with total = 0.0
 
         List<Product> orders = Arrays.asList(new Product[]{
                 new Product(Menu.ESPRESSO, 1)
         });
-        Printer.getInstance().printReceipt(orders, 5.0);
+        Printer.getInstance().printReceipt(orders, 5.0, "promo");
         //This should print a receipt with 1 espresso 4.0 and total 5.0
 
         orders = Arrays.asList(new Product[]{
@@ -43,7 +43,7 @@ public class PrinterTest {
                 new Product(Menu.LATTE, 15),
                 new Product(Menu.ESPRESSO, 100)
         });
-        Printer.getInstance().printReceipt(orders, 5.0);
+        Printer.getInstance().printReceipt(orders, 5.0, "promo");
         //This should print a receipt with all products above and total 5.0
 
     }
