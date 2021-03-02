@@ -116,4 +116,25 @@ public class CoffeeShopTest {
         assertThat(total, is(113.62));
     }
 
+    @Test
+    public void testNewProducts() {
+        CoffeeShop coffeeShop = new CoffeeShop();
+        coffeeShop.printMenu();
+
+        coffeeShop.takeOrder(Menu.CAPPUCCINO, 1);
+        coffeeShop.takeOrder(Menu.TEA, 1);
+        coffeeShop.takeOrder(Menu.CAKE_SLICE, 1);
+        coffeeShop.takeOrder(Menu.MILK, 1);
+
+        Double total = coffeeShop.printReceipt();
+        // Total should be $24.1 ( 8.0 + 6.1 + 9.0 + 1.0 = 24.1 )
+        assertThat(total, is(24.1));
+
+        coffeeShop.takeOrder(Menu.CAPPUCCINO, 5);
+        total = coffeeShop.printReceipt();
+        // Total should be $60.89 ( 8.0 + 6.1 + 9.0 + 1.0 + 8.0*5 = 64.1 - 5% )
+        assertThat(total, is(60.89));
+
+    }
+
 }
