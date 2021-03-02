@@ -13,7 +13,7 @@ public class CoffeeShop {
 
     public static final String CURRENCY = "$";
     private List<Product> orders = new ArrayList<>();
-    private List<AbstractPromotion> availablePromotions = Arrays.asList(
+    private final List<AbstractPromotion> availablePromotions = Arrays.asList(
             new EspressoPromotion("1FreeEspresso x 2Lattes"),
             new TotalProductsPromotion("5%off x 8products")
     );
@@ -26,12 +26,21 @@ public class CoffeeShop {
 
     public Double calculateTotal() {
         AbstractPromotion cheapestPromotion = availablePromotions.stream()
-                .min(Comparator.comparingDouble(x -> x.calculateTotal(this.orders))).get();
+                .filter(p -> p.isSuitable(this.orders))
+                .min(Comparator.comparingDouble(x -> x.calculateTotal(this.orders))).orElse(null);
 
-        this.appliedPromotion = cheapestPromotion.getName();
-        this.total = cheapestPromotion.calculateTotal(this.orders);
+        if (cheapestPromotion != null) {
+            this.appliedPromotion = cheapestPromotion.getName();
+            this.total = cheapestPromotion.calculateTotal(this.orders);
+            //If cheapest promotion is per product, applies discount in every product
+            if (cheapestPromotion.isPerProduct()) {
+                cheapestPromotion.applyPerProduct(this.orders);
+            }
+        } else {
+            this.total = AbstractPromotion.calculateOriginalTotal(this.orders);
+        }
 
-        return total;
+        return this.total;
     }
 
     public Double printReceipt() {

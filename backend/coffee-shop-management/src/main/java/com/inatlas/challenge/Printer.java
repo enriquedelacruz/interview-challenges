@@ -1,5 +1,7 @@
 package com.inatlas.challenge;
 
+import com.inatlas.challenge.utils.Utils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +18,7 @@ public class Printer {
     private static final String PRODUCT_LABEL = "Product";
     private static final String PRICE_LABEL = "Price";
     private static final String TOTAL_LABEL = "Total";
-    private static final String PROMOTION_LABEL = "* Promotion";
+    private static final String PROMOTION_LABEL = "(*) Promotion";
     private static final String CURRENCY = CoffeeShop.CURRENCY;
 
     private static Printer printer;
@@ -61,7 +63,7 @@ public class Printer {
                         String productNameAnQuantity = p.getQuantity() + " " + p.getName().getName();
                         return productNameAnQuantity
                                 + repeatString(".", COLUMN_WIDTH - productNameAnQuantity.length() + 1)
-                                + CURRENCY + " " + p.getPrice();
+                                + CURRENCY + " " + Utils.formatDouble(p.getPrice()) + ((p.isDiscount())?" (*)":"");
                     })
                     .collect(Collectors.joining("\n")) + "\n");
         }
