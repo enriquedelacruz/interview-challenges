@@ -5,6 +5,7 @@ import com.inatlas.challenge.Product;
 import com.inatlas.challenge.utils.Utils;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EspressoPromotion extends AbstractPromotion {
 
@@ -49,19 +50,25 @@ public class EspressoPromotion extends AbstractPromotion {
             calculateOriginalTotal(products);
         }
         if (this.maxFreeEspressos > 0) {
-            int auxMaxFreeEspressos = this.maxFreeEspressos;
+            AtomicInteger auxMaxFreeEspressos = new AtomicInteger(this.maxFreeEspressos);
             //Find espressos in products with quantity = 1 and set discount
             products.stream()
                     .filter(p -> p.getName().equals(Menu.ESPRESSO) && p.getQuantity() == 1)
-                    .forEach(p -> p.setDiscount(true));
-            //Count expressos with discount
+                    .forEach(p -> {
+                        if (auxMaxFreeEspressos.get() > 0) {
+                            p.setDiscount(true);
+                            p.setPromoPrice(0.0);
+                            auxMaxFreeEspressos.getAndDecrement();
+                        }
+                    });
+            //Count espressos with discount
             Long espressosWithDiscount = products.stream()
                     .filter(p -> p.getName().equals(Menu.ESPRESSO) && p.isDiscount())
                     .count();
             //And removes from aux variable (pending espressos)
-            auxMaxFreeEspressos -= espressosWithDiscount;
-            if (auxMaxFreeEspressos > 0) {
-                int finalAuxMaxFreeEspressos = auxMaxFreeEspressos;
+            auxMaxFreeEspressos.set((int) (auxMaxFreeEspressos.get() - espressosWithDiscount));
+            if (auxMaxFreeEspressos.get() > 0) {
+                int finalAuxMaxFreeEspressos = auxMaxFreeEspressos.get();
                 //Removes from the other espressos quantity
                 products.stream()
                         .filter(p -> p.getName().equals(Menu.ESPRESSO) && p.getQuantity() > 1)
@@ -69,7 +76,7 @@ public class EspressoPromotion extends AbstractPromotion {
                             p.setQuantity(p.getQuantity() - finalAuxMaxFreeEspressos);
                         });
                 //And adds the new item of espressos with discount
-                products.add(new Product(Menu.ESPRESSO, finalAuxMaxFreeEspressos, true));
+                products.add(new Product(Menu.ESPRESSO, finalAuxMaxFreeEspressos, true, 0.0));
             }
 
         }

@@ -53,6 +53,8 @@ public class PromotionTest {
                 new Product(Menu.LATTE, 4),
                 new Product(Menu.ESPRESSO, 1)
         });
+        total = espressoPromotion.calculateTotal(products);
+        assertThat(total, is(21.2)); //$4*2 + $5.3*4 -$8 (promo)
         espressoPromotion.applyPerProduct(products);
         //Count espressos with discount
         espressosWithDiscount = products.stream()
@@ -120,4 +122,40 @@ public class PromotionTest {
 
     }
 
+    @Test
+    public void testTotalAmountPromotion() {
+
+        TotalAmountPromotion totalAmountPromotion = new TotalAmountPromotion("Total amount promo");
+        boolean isPerProduct = totalAmountPromotion.isPerProduct();
+        assertThat(isPerProduct, is(true));
+
+        List<Product> products = Arrays.asList(new Product[]{
+                new Product(Menu.ESPRESSO, 1),
+                new Product(Menu.LATTE, 1),
+        });
+        boolean suitable = totalAmountPromotion.isSuitable(products);
+        assertThat(suitable, is(false));
+        Double total = totalAmountPromotion.calculateTotal(products);
+        assertThat(total, is(9.3)); //$4 + $5.3
+
+        products = Arrays.asList(new Product[]{
+                new Product(Menu.ESPRESSO, 10),
+                new Product(Menu.LATTE, 5),
+        });
+        suitable = totalAmountPromotion.isSuitable(products);
+        assertThat(suitable, is(true));
+        total = totalAmountPromotion.calculateTotal(products);
+        assertThat(total, is(55.0)); //$4*10 + $3*5
+
+        products = Arrays.asList(new Product[]{
+                new Product(Menu.ESPRESSO, 10),
+                new Product(Menu.LATTE, 500),
+        });
+        suitable = totalAmountPromotion.isSuitable(products);
+        assertThat(suitable, is(true));
+        total = totalAmountPromotion.calculateTotal(products);
+        assertThat(total, is(1540.0)); //$4*10 + $3*500
+
     }
+
+}

@@ -8,16 +8,26 @@ public class Product {
     private Menu name;
     private Integer quantity;
     private boolean discount;
+    private Double promoPrice;
 
     public Product(Menu name, Integer qtt) {
         this.name = name;
         this.quantity = qtt;
+        this.promoPrice = name.getPrice();
     }
 
     public Product(Menu name, Integer qtt, boolean discount) {
         this.name = name;
         this.quantity = qtt;
         this.discount = discount;
+        this.promoPrice = name.getPrice();
+    }
+
+    public Product(Menu name, Integer qtt, boolean discount, Double promoPrice) {
+        this.name = name;
+        this.quantity = qtt;
+        this.discount = discount;
+        this.promoPrice = promoPrice;
     }
 
     @Override
@@ -42,6 +52,8 @@ public class Product {
 
         if (!discount) {
             price = Utils.formatDouble(this.name.getPrice()) * this.quantity;
+        } else {
+            price = Utils.formatDouble(this.promoPrice) * this.quantity;
         }
 
         return price;
@@ -53,5 +65,13 @@ public class Product {
 
     public void setDiscount(boolean discount) {
         this.discount = discount;
+    }
+
+    public Double getPromoPrice() {
+        return promoPrice;
+    }
+
+    public void setPromoPrice(Double promoPrice) {
+        this.promoPrice = promoPrice;
     }
 }

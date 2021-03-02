@@ -2,6 +2,7 @@ package com.inatlas.challenge;
 
 import com.inatlas.challenge.promotion.AbstractPromotion;
 import com.inatlas.challenge.promotion.EspressoPromotion;
+import com.inatlas.challenge.promotion.TotalAmountPromotion;
 import com.inatlas.challenge.promotion.TotalProductsPromotion;
 
 import java.util.ArrayList;
@@ -15,7 +16,8 @@ public class CoffeeShop {
     private List<Product> orders = new ArrayList<>();
     private final List<AbstractPromotion> availablePromotions = Arrays.asList(
             new EspressoPromotion("1FreeEspresso x 2Lattes"),
-            new TotalProductsPromotion("5%off x 8products")
+            new TotalProductsPromotion("5%off x 8products"),
+            new TotalAmountPromotion("$3Latte x $50order")
     );
     private Double total = 0.0;
     private String appliedPromotion;

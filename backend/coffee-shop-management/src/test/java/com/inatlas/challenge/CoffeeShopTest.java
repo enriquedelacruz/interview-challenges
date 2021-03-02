@@ -37,7 +37,8 @@ public class CoffeeShopTest {
         coffeeShop.takeOrder(Menu.SANDWICH, 2);
         total = coffeeShop.printReceipt();
         // Total should be $53.7 ( 5.3 + 4 + 10.10 + 4 + 10.10 + 10.10 + 10.10 = 53.7 )
-        assertThat(total, is(53.7));
+        // Total is greater than $50, so we apply discount of $3 Latte, total should be $51.4 (the cheapest)
+        assertThat(total, is(51.4));
     }
 
     @Test
@@ -103,10 +104,11 @@ public class CoffeeShopTest {
         coffeeShop.takeOrder(Menu.ESPRESSO, 1);
         coffeeShop.takeOrder(Menu.SANDWICH, 6);
         // Total of order should be $59.0 ( 5.3 + 5.3 + 4 + 4 + 10.10 x6 = 79.2 )
-        // Total after discount of 1espressox2lattes should be $75.2 (the cheapest)
+        // Total after discount of 1espressox2lattes should be $75.2
         // Total after discount of 5% should be $75.24
+        // Total after discount of $3 Latte should be $74.6 (the cheapest)
         Double total = coffeeShop.printReceipt();
-        assertThat(total, is(75.2));
+        assertThat(total, is(74.6));
 
         coffeeShop.takeOrder(Menu.SANDWICH, 4);
         // Total of order should be $119.6 ( 5.3 + 5.3 + 4 + 4 + 10.10 x10 = 119.6 )
