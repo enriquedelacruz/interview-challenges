@@ -1,5 +1,7 @@
 package com.inatlas.challenge;
 
+import com.inatlas.challenge.products.Menu;
+import com.inatlas.challenge.products.Product;
 import com.inatlas.challenge.utils.Utils;
 
 import java.util.Arrays;
@@ -14,12 +16,13 @@ public class Printer {
     private static final int COLUMN_WIDTH = 15;
     private static final String MENU_LABEL = "COFFEE SHOP MENU";
     private static final String RECEIPT_LABEL = "RECEIPT";
+    private static final String PROMOTIONS_LABEL = "PROMOTIONS";
     private static final String QUANTITY_LABEL = "Quantity";
     private static final String PRODUCT_LABEL = "Product";
     private static final String PRICE_LABEL = "Price";
     private static final String TOTAL_LABEL = "Total";
     private static final String PROMOTION_LABEL = "(*) Promotion";
-    private static final String CURRENCY = CoffeeShop.CURRENCY;
+    private static final String CURRENCY = Order.CURRENCY;
 
     private static Printer printer;
 
@@ -88,11 +91,20 @@ public class Printer {
         StringBuilder sbMenu = new StringBuilder(createHeader(MENU_LABEL, Arrays.asList(new String[] { PRODUCT_LABEL, PRICE_LABEL})));
 
         //Body
-        sbMenu.append(Arrays.stream(Menu.values())
+        sbMenu.append(Arrays.stream(Menu.MenuProduct.values())
                 .map(p -> {
                     return p.getName()
                             + repeatString(".", COLUMN_WIDTH - p.getName().length() + 1)
                             + CURRENCY + " " + p.getPrice();
+                })
+                .collect(Collectors.joining("\n")) + "\n");
+
+        //Promotions
+        sbMenu.append(repeatString("-", COLUMN_WIDTH * 2) + "\n");
+        sbMenu.append(PROMOTIONS_LABEL + "\n");
+        sbMenu.append(Menu.availablePromotions.stream()
+                .map(p -> {
+                    return " - " + p.getName();
                 })
                 .collect(Collectors.joining("\n")) + "\n");
 

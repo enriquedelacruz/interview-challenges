@@ -1,6 +1,6 @@
 package com.inatlas.challenge.promotion;
 
-import com.inatlas.challenge.Product;
+import com.inatlas.challenge.products.Product;
 import com.inatlas.challenge.utils.Utils;
 
 import java.util.List;

@@ -1,29 +1,29 @@
-package com.inatlas.challenge;
+package com.inatlas.challenge.products;
 
 
 import com.inatlas.challenge.utils.Utils;
 
 public class Product {
 
-    private Menu name;
+    private Menu.MenuProduct name;
     private Integer quantity;
     private boolean discount;
     private Double promoPrice;
 
-    public Product(Menu name, Integer qtt) {
+    public Product(Menu.MenuProduct name, Integer qtt) {
         this.name = name;
         this.quantity = qtt;
         this.promoPrice = name.getPrice();
     }
 
-    public Product(Menu name, Integer qtt, boolean discount) {
+    public Product(Menu.MenuProduct name, Integer qtt, boolean discount) {
         this.name = name;
         this.quantity = qtt;
         this.discount = discount;
         this.promoPrice = name.getPrice();
     }
 
-    public Product(Menu name, Integer qtt, boolean discount, Double promoPrice) {
+    public Product(Menu.MenuProduct name, Integer qtt, boolean discount, Double promoPrice) {
         this.name = name;
         this.quantity = qtt;
         this.discount = discount;
@@ -43,7 +43,7 @@ public class Product {
         this.quantity = quantity;
     }
 
-    public Menu getName() {
+    public Menu.MenuProduct getName() {
         return name;
     }
 

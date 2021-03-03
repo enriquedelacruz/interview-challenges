@@ -1,7 +1,7 @@
 package com.inatlas.challenge.promotion;
 
-import com.inatlas.challenge.Menu;
-import com.inatlas.challenge.Product;
+import com.inatlas.challenge.products.Menu;
+import com.inatlas.challenge.products.Product;
 import com.inatlas.challenge.utils.Utils;
 
 import java.util.List;
@@ -22,14 +22,14 @@ public class EspressoPromotion extends AbstractPromotion {
         //Count total lattes in the order
         int totalLattes = products.stream()
                 .filter(p -> {
-                    return p.getName() == Menu.LATTE;
+                    return p.getName() == Menu.MenuProduct.LATTE;
                 })
                 .map(Product::getQuantity)
                 .reduce(0, (a, b) -> a + b);
         //Count total espressos in the order
         int totalEspressos = products.stream()
                 .filter(p -> {
-                    return p.getName() == Menu.ESPRESSO;
+                    return p.getName() == Menu.MenuProduct.ESPRESSO;
                 })
                 .map(Product::getQuantity)
                 .reduce(0, (a, b) -> a + b);
@@ -38,7 +38,7 @@ public class EspressoPromotion extends AbstractPromotion {
 
         Double total = calculateOriginalTotal(products);
         if (maxFreeEspressos > 0) {
-            total -= maxFreeEspressos * Menu.ESPRESSO.getPrice();
+            total -= maxFreeEspressos * Menu.MenuProduct.ESPRESSO.getPrice();
         }
 
         return Utils.formatDouble(total);
@@ -53,7 +53,7 @@ public class EspressoPromotion extends AbstractPromotion {
             AtomicInteger auxMaxFreeEspressos = new AtomicInteger(this.maxFreeEspressos);
             //Find espressos in products with quantity = 1 and set discount
             products.stream()
-                    .filter(p -> p.getName().equals(Menu.ESPRESSO) && p.getQuantity() == 1)
+                    .filter(p -> p.getName().equals(Menu.MenuProduct.ESPRESSO) && p.getQuantity() == 1)
                     .forEach(p -> {
                         if (auxMaxFreeEspressos.get() > 0) {
                             p.setDiscount(true);
@@ -63,7 +63,7 @@ public class EspressoPromotion extends AbstractPromotion {
                     });
             //Count espressos with discount
             Long espressosWithDiscount = products.stream()
-                    .filter(p -> p.getName().equals(Menu.ESPRESSO) && p.isDiscount())
+                    .filter(p -> p.getName().equals(Menu.MenuProduct.ESPRESSO) && p.isDiscount())
                     .count();
             //And removes from aux variable (pending espressos)
             auxMaxFreeEspressos.set((int) (auxMaxFreeEspressos.get() - espressosWithDiscount));
@@ -71,12 +71,12 @@ public class EspressoPromotion extends AbstractPromotion {
                 int finalAuxMaxFreeEspressos = auxMaxFreeEspressos.get();
                 //Removes from the other espressos quantity
                 products.stream()
-                        .filter(p -> p.getName().equals(Menu.ESPRESSO) && p.getQuantity() > 1)
+                        .filter(p -> p.getName().equals(Menu.MenuProduct.ESPRESSO) && p.getQuantity() > 1)
                         .forEach(p -> {
                             p.setQuantity(p.getQuantity() - finalAuxMaxFreeEspressos);
                         });
                 //And adds the new item of espressos with discount
-                products.add(new Product(Menu.ESPRESSO, finalAuxMaxFreeEspressos, true, 0.0));
+                products.add(new Product(Menu.MenuProduct.ESPRESSO, finalAuxMaxFreeEspressos, true, 0.0));
             }
 
         }
@@ -86,13 +86,13 @@ public class EspressoPromotion extends AbstractPromotion {
     public boolean isSuitable(List<Product> products) {
         int totalLattes = products.stream()
                 .filter(p -> {
-                    return p.getName() == Menu.LATTE;
+                    return p.getName() == Menu.MenuProduct.LATTE;
                 })
                 .map(Product::getQuantity)
                 .reduce(0, (a, b) -> a + b);
         int totalEspressos = products.stream()
                 .filter(p -> {
-                    return p.getName() == Menu.ESPRESSO;
+                    return p.getName() == Menu.MenuProduct.ESPRESSO;
                 })
                 .map(Product::getQuantity)
                 .reduce(0, (a, b) -> a + b);

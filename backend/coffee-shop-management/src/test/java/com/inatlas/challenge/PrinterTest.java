@@ -1,12 +1,11 @@
 package com.inatlas.challenge;
 
+import com.inatlas.challenge.products.Menu;
+import com.inatlas.challenge.products.Product;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 public class PrinterTest {
 
@@ -32,16 +31,16 @@ public class PrinterTest {
         //This should print an empty receipt with total = 0.0
 
         List<Product> orders = Arrays.asList(new Product[]{
-                new Product(Menu.ESPRESSO, 1)
+                new Product(Menu.MenuProduct.ESPRESSO, 1)
         });
         Printer.getInstance().printReceipt(orders, 5.0, "promo");
         //This should print a receipt with 1 espresso 4.0 and total 5.0
 
         orders = Arrays.asList(new Product[]{
-                new Product(Menu.ESPRESSO, 250),
-                new Product(Menu.SANDWICH, 10),
-                new Product(Menu.LATTE, 15),
-                new Product(Menu.ESPRESSO, 100)
+                new Product(Menu.MenuProduct.ESPRESSO, 250),
+                new Product(Menu.MenuProduct.SANDWICH, 10),
+                new Product(Menu.MenuProduct.LATTE, 15),
+                new Product(Menu.MenuProduct.ESPRESSO, 100)
         });
         Printer.getInstance().printReceipt(orders, 5.0, "promo");
         //This should print a receipt with all products above and total 5.0

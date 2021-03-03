@@ -1,7 +1,7 @@
 package com.inatlas.challenge.promotion;
 
-import com.inatlas.challenge.Menu;
-import com.inatlas.challenge.Product;
+import com.inatlas.challenge.products.Menu;
+import com.inatlas.challenge.products.Product;
 import com.inatlas.challenge.utils.Utils;
 
 import java.util.List;
@@ -24,12 +24,12 @@ public class TotalAmountPromotion extends AbstractPromotion {
         if (isSuitable(order)) {
             int totalLattes = order.stream()
                     .filter(p -> {
-                        return p.getName() == Menu.LATTE;
+                        return p.getName() == Menu.MenuProduct.LATTE;
                     })
                     .map(Product::getQuantity)
                     .reduce(0, (a, b) -> a + b);
 
-            total -= totalLattes * (Menu.LATTE.getPrice() - LATTE_NEWPRICE);
+            total -= totalLattes * (Menu.MenuProduct.LATTE.getPrice() - LATTE_NEWPRICE);
         }
 
         return Utils.formatDouble(total);
@@ -38,7 +38,7 @@ public class TotalAmountPromotion extends AbstractPromotion {
     @Override
     public void applyPerProduct(List<Product> products) {
         products.stream()
-                .filter(p -> p.getName().equals(Menu.LATTE))
+                .filter(p -> p.getName().equals(Menu.MenuProduct.LATTE))
                 .forEach(p -> {
                     p.setPromoPrice(LATTE_NEWPRICE);
                     p.setDiscount(true);
