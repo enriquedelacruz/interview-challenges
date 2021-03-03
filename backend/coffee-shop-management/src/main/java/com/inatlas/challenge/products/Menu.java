@@ -1,5 +1,6 @@
 package com.inatlas.challenge.products;
 
+import com.inatlas.challenge.Printer;
 import com.inatlas.challenge.promotion.AbstractPromotion;
 import com.inatlas.challenge.promotion.EspressoPromotion;
 import com.inatlas.challenge.promotion.TotalAmountPromotion;
@@ -41,5 +42,10 @@ public class Menu {
             new TotalProductsPromotion("5%off x 8products"),
             new TotalAmountPromotion("$3Latte x $50order")
     );
+
+    public static void printMenu() {
+        // Print whole menu
+        Printer.getInstance().printMenu();
+    }
 
 }

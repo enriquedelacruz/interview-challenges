@@ -11,13 +11,13 @@ public class OrderTest {
     @Test
     public void testPrintMenu() {
         Order order = new Order();
-        order.printMenu();
+        Menu.printMenu();
     }
 
     @Test
     public void testTakeMyFirstOrder() {
         Order order = new Order();
-        order.printMenu();
+        Menu.printMenu();
         order.takeOrder(Menu.MenuProduct.LATTE, 1);
         order.takeOrder(Menu.MenuProduct.ESPRESSO, 1);
         order.takeOrder(Menu.MenuProduct.SANDWICH, 1);
@@ -45,7 +45,7 @@ public class OrderTest {
     @Test
     public void testTakeMySecondOrder() {
         Order order = new Order();
-        order.printMenu();
+        Menu.printMenu();
         order.takeOrder(Menu.MenuProduct.LATTE, 2);
         order.takeOrder(Menu.MenuProduct.ESPRESSO, 1);
         order.takeOrder(Menu.MenuProduct.SANDWICH, 1);
@@ -57,7 +57,7 @@ public class OrderTest {
     @Test
     public void testTakeMyThirdOrder3() {
         Order order = new Order();
-        order.printMenu();
+        Menu.printMenu();
         order.takeOrder(Menu.MenuProduct.LATTE, 1);
         order.takeOrder(Menu.MenuProduct.LATTE, 1);
         order.takeOrder(Menu.MenuProduct.ESPRESSO, 1);
@@ -70,7 +70,7 @@ public class OrderTest {
     @Test
     public void testTakeMyFourthOrder() {
         Order order = new Order();
-        order.printMenu();
+        Menu.printMenu();
         order.takeOrder(Menu.MenuProduct.LATTE, 2);
         order.takeOrder(Menu.MenuProduct.ESPRESSO, 1);
         order.takeOrder(Menu.MenuProduct.ESPRESSO, 1);
@@ -98,7 +98,7 @@ public class OrderTest {
     @Test
     public void testPromotions() {
         Order order = new Order();
-        order.printMenu();
+        Menu.printMenu();
 
         order.takeOrder(Menu.MenuProduct.LATTE, 2);
         order.takeOrder(Menu.MenuProduct.ESPRESSO, 1);
@@ -122,7 +122,7 @@ public class OrderTest {
     @Test
     public void testNewProducts() {
         Order order = new Order();
-        order.printMenu();
+        Menu.printMenu();
 
         order.takeOrder(Menu.MenuProduct.CAPPUCCINO, 1);
         order.takeOrder(Menu.MenuProduct.TEA, 1);

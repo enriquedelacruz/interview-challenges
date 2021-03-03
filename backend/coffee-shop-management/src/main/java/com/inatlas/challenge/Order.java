@@ -40,17 +40,12 @@ public class Order {
 
     public Double printReceipt() {
         //Calculate total amount of receipt
-        Double total = calculateTotal();
+        this.total = calculateTotal();
 
         //Print receipt by Printer
         Printer.getInstance().printReceipt(this.products, this.total, this.appliedPromotion);
 
-        return total;
-    }
-
-    public void printMenu() {
-        // Print whole menu
-        Printer.getInstance().printMenu();
+        return this.total;
     }
 
 }
