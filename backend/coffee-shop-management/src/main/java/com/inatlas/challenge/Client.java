@@ -21,6 +21,16 @@ public class Client {
     }
 
     //Public methods
+    public Order registerNewOrder() {
+        if (this.orders == null) {
+            this.orders = new ArrayList<>();
+        }
+        Order newOrder = new Order();
+        this.orders.add(newOrder);
+
+        return newOrder;
+    }
+
     public void printAllReceipts() {
         orders.stream().forEach(Order::printReceipt);
     }
