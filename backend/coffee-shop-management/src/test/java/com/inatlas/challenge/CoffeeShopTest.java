@@ -2,7 +2,9 @@ package com.inatlas.challenge;
 
 import com.inatlas.challenge.products.Menu;
 import com.inatlas.challenge.utils.Utils;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import java.util.Date;
 
@@ -10,10 +12,11 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CoffeeShopTest {
 
     @Test
-    public void coffeeShopBasicTests() {
+    public void test1CoffeeShopBasicTests() {
 
         assertThat(CoffeeShop.getInstance(), notNullValue());
         //Test the singleton class, getInstance always returns the same object
@@ -22,7 +25,7 @@ public class CoffeeShopTest {
     }
 
     @Test
-    public void coffeeShopTests() {
+    public void test2CoffeeShopTests() {
 
         CoffeeShop.getInstance().printMenu(); //This should prints the whole menu
         assertThat(CoffeeShop.getInstance().getClients(), notNullValue());
@@ -105,7 +108,7 @@ public class CoffeeShopTest {
     }
 
     @Test
-    public void testCoffeeShopDailyProductsSold() {
+    public void test3CoffeeShopDailyProductsSold() {
 
         Order dailyOrderSummary = CoffeeShop.getInstance().listDailyProductsSold(Utils.parseDate(null, Utils.DATE_FORMAT));
         Printer.getInstance().printDailyProductsSold(dailyOrderSummary);
@@ -121,20 +124,20 @@ public class CoffeeShopTest {
         CoffeeShop.getInstance().printDailyProductsSold(todayDate);
         //This should print a receipt with total products sold in TODAY
 
-        dailyOrderSummary = CoffeeShop.getInstance().listDailyProductsSold(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT));
+        dailyOrderSummary = CoffeeShop.getInstance().listDailyProductsSold(Utils.parseDate("15-02-2021", Utils.DATE_FORMAT));
         assertThat(dailyOrderSummary.getTotal(), is(0.0));
-        CoffeeShop.getInstance().printDailyProductsSold(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT));
+        CoffeeShop.getInstance().printDailyProductsSold(Utils.parseDate("15-02-2021", Utils.DATE_FORMAT));
         //This should print a receipt with 0 products sold
 
     }
 
     @Test
-    public void testCoffeeShopDailyAverage() {
+    public void test4CoffeeShopDailyAverage() {
 
         Double dailyAverageExpense = CoffeeShop.getInstance().calculateDailyClientAverageExpense(null);
         assertThat(dailyAverageExpense, is(0.0));
 
-        final String TODAY = "04-03-2021";
+        final String TODAY = "03-03-2021";
         for (int i = 0; i < 10; i++) {
             CoffeeShop.getInstance().getClients().add(buildClient(TODAY));
         }
