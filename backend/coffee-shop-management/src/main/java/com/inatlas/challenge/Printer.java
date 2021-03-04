@@ -16,8 +16,8 @@ public class Printer {
     private static final int COLUMN_WIDTH = 15;
     private static final String MENU_LABEL = "COFFEE SHOP MENU";
     private static final String RECEIPT_LABEL = "RECEIPT";
+    private static final String DAILY_REPORT_LABEL = "DAILY REPORT";
     private static final String PROMOTIONS_LABEL = "PROMOTIONS";
-    private static final String QUANTITY_LABEL = "Quantity";
     private static final String PRODUCT_LABEL = "Product";
     private static final String PRICE_LABEL = "Price";
     private static final String TOTAL_LABEL = "Total";
@@ -36,8 +36,16 @@ public class Printer {
         return printer;
     }
 
+    public void printReceipt(Order order) {
+        print(createReceipt(order));
+    }
+
     public void printReceipt(List<Product> orders, double total, String appliedPromotion) {
-        print(createReceipt(orders, total, appliedPromotion));
+        print(createReceipt(RECEIPT_LABEL, null, orders, total, appliedPromotion));
+    }
+
+    public void printDailyProductsSold(Order dailyProductSold) {
+        print(createDailyProductsSold(dailyProductSold));
     }
 
     public void printMenu() {
@@ -55,9 +63,33 @@ public class Printer {
     }
 
 
-    private String createReceipt(List<Product> orders, double total, String promotionApplied) {
+    //Private methods
+    private String createDailyProductsSold(Order dailyProductSold) {
+        String output = "";
+        if (dailyProductSold != null) {
+            if (dailyProductSold.getTotal() == 0.0) {
+                dailyProductSold.calculateTotalWithoutPromotions();
+            }
+            //Create a special receipt without promotions
+            output = createReceipt(DAILY_REPORT_LABEL, Utils.formatDate(dailyProductSold.getDate()), dailyProductSold.getProducts(), dailyProductSold.getTotal(), null);
+        }
+        return output;
+    }
+
+    private String createReceipt(Order order) {
+        String output = "";
+        if (order != null) {
+            if (order.getTotal() == 0.0) {
+                order.calculateTotal();
+            }
+            output = createReceipt(RECEIPT_LABEL, Utils.formatDate(order.getDate()), order.getProducts(), order.getTotal(), order.getAppliedPromotion());
+        }
+        return output;
+    }
+
+    private String createReceipt(String title, String date,  List<Product> orders, double total, String promotionApplied) {
         //Header
-        StringBuilder sbReceipt = new StringBuilder(createHeader(RECEIPT_LABEL, Arrays.asList(new String[] { PRODUCT_LABEL, PRICE_LABEL})));
+        StringBuilder sbReceipt = new StringBuilder(createHeader(title, date, Arrays.asList(new String[] { PRODUCT_LABEL, PRICE_LABEL})));
 
         if (orders != null && !orders.isEmpty()) {
             //Body
@@ -88,7 +120,7 @@ public class Printer {
 
     private String createMenu() {
         //Header
-        StringBuilder sbMenu = new StringBuilder(createHeader(MENU_LABEL, Arrays.asList(new String[] { PRODUCT_LABEL, PRICE_LABEL})));
+        StringBuilder sbMenu = new StringBuilder(createHeader(MENU_LABEL, null, Arrays.asList(new String[] { PRODUCT_LABEL, PRICE_LABEL})));
 
         //Body
         sbMenu.append(Arrays.stream(Menu.MenuProduct.values())
@@ -114,13 +146,16 @@ public class Printer {
         return sbMenu.toString();
     }
 
-    private String createHeader(String title, List<String> columns) {
+    private String createHeader(String title, String date, List<String> columns) {
         StringBuilder sbHeader = new StringBuilder();
         if (columns != null && !columns.isEmpty()) {
             int headerWidth = COLUMN_WIDTH * columns.size();
             sbHeader.append(repeatString("=", headerWidth) + "\n");
             //Title
             sbHeader.append(repeatString(" ", (headerWidth - title.length()) / 2) + title + "\n");
+            if (date != null) {
+                sbHeader.append(repeatString(" ", (headerWidth - date.length()) / 2) + date + "\n");
+            }
             sbHeader.append(repeatString("-", headerWidth) + "\n");
 
             //Columns

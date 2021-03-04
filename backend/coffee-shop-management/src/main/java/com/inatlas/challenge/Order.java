@@ -25,6 +25,14 @@ public class Order {
     }
 
     //Getters and Setters
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
     public Double getTotal() {
         return total;
     }
@@ -37,9 +45,18 @@ public class Order {
         this.date = date;
     }
 
+    public String getAppliedPromotion() {
+        return appliedPromotion;
+    }
+
     //Public methods
     public void takeOrder(Menu.MenuProduct product, Integer quantity) {
         this.products.add(new Product(product, quantity));
+    }
+
+    public Double calculateTotalWithoutPromotions() {
+        this.total = AbstractPromotion.calculateOriginalTotal(this.products);
+        return this.total;
     }
 
     public Double calculateTotal() {

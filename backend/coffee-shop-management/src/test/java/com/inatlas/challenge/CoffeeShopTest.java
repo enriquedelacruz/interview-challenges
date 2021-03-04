@@ -84,4 +84,48 @@ public class CoffeeShopTest {
 
     }
 
+    private Order buildOrder(String stringDate) {
+
+        Order order = new Order();
+        order.setDate(Utils.parseDate(stringDate, Utils.DATE_FORMAT)); //To test different dates
+        order.takeOrder(Menu.MenuProduct.ESPRESSO, 3);
+        order.takeOrder(Menu.MenuProduct.LATTE, 2);
+
+        return order;
+
+    }
+
+    private Client buildClient(String stringDate) {
+
+        Client client = new Client();
+        client.getOrders().set(0, buildOrder(stringDate));
+
+        return client;
+
+    }
+
+    @Test
+    public void testCoffeeShopReports() {
+
+        Order dailyOrderSummary = CoffeeShop.getInstance().listDailyProductsSold(Utils.parseDate(null, Utils.DATE_FORMAT));
+        Printer.getInstance().printDailyProductsSold(dailyOrderSummary);
+
+        final String TODAY = "04-03-2021";
+        for (int i=0; i<10; i++) {
+            CoffeeShop.getInstance().getClients().add(buildClient(TODAY));
+        }
+        final Date todayDate = Utils.parseDate(TODAY, Utils.DATE_FORMAT);
+
+        dailyOrderSummary = CoffeeShop.getInstance().listDailyProductsSold(todayDate);
+        assertThat(dailyOrderSummary.getTotal(), is(226.0));
+        CoffeeShop.getInstance().printDailyProductsSold(todayDate);
+        //This should print a receipt with total products sold in TODAY
+
+        dailyOrderSummary = CoffeeShop.getInstance().listDailyProductsSold(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT));
+        assertThat(dailyOrderSummary.getTotal(), is(0.0));
+        CoffeeShop.getInstance().printDailyProductsSold(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT));
+        //This should print a receipt with 0 products sold
+
+    }
+
 }
