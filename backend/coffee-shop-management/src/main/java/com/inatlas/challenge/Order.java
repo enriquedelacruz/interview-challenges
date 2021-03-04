@@ -6,15 +6,38 @@ import com.inatlas.challenge.promotion.AbstractPromotion;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class Order {
 
     public static final String CURRENCY = "$";
-    private List<Product> products = new ArrayList<>();
-    private Double total = 0.0;
+    private List<Product> products;
+    private Double total;
     private String appliedPromotion;
+    private Date date;
 
+    //Constructors
+    public Order() {
+        this.products = new ArrayList<>();
+        this.total = 0.0;
+        this.date = new Date();
+    }
+
+    //Getters and Setters
+    public Double getTotal() {
+        return total;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    //Public methods
     public void takeOrder(Menu.MenuProduct product, Integer quantity) {
         this.products.add(new Product(product, quantity));
     }

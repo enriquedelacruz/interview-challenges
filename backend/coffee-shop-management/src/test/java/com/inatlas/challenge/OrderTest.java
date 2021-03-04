@@ -1,9 +1,11 @@
 package com.inatlas.challenge;
 
 import com.inatlas.challenge.products.Menu;
+import com.inatlas.challenge.utils.Utils;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
 public class OrderTest {
@@ -137,6 +139,18 @@ public class OrderTest {
         total = order.printReceipt();
         // Total should be $60.89 ( 8.0 + 6.1 + 9.0 + 1.0 + 8.0*5 = 64.1 - 5% )
         assertThat(total, is(60.89));
+
+    }
+
+    @Test
+    public void testDates() {
+
+        Order order = new Order(); //The constructor assign the
+        order.setDate(Utils.parseDate("21-02-2021", Utils.DATE_FORMAT)); //To test different dates
+        assertThat(Utils.formatDate(order.getDate()), is("21-02-2021"));
+
+        order.setDate(Utils.parseDate("21-02-2021", Utils.DATE_FORMAT)); //Force a specific date fot testing
+        assertThat(Utils.formatDate(order.getDate()), is("21-02-2021"));
 
     }
 
