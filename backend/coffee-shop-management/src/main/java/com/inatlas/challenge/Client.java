@@ -37,4 +37,19 @@ public class Client {
         return ordersFound;
 
     }
+
+    public int countOrdersByDateRange(Date beginDate, Date endDate) {
+
+        int count = 0;
+        if (beginDate != null && endDate != null) {
+            List<Order> ordersFound = findOrdersByDateRange(beginDate, endDate);
+            if (ordersFound != null) {
+                count = ordersFound.size();
+            }
+        }
+
+        return count;
+
+    }
+
 }

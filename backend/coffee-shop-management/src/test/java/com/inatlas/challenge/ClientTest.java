@@ -76,21 +76,29 @@ public class ClientTest {
         ordersFound = client.findOrdersByDateRange(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT), Utils.parseDate("01-03-2021", Utils.DATE_FORMAT));
         assertThat(ordersFound, notNullValue());
         assertThat(ordersFound.size(), is(0));
+        int ordersFoundCount = client.countOrdersByDateRange(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT), Utils.parseDate("01-03-2021", Utils.DATE_FORMAT));
+        assertThat(ordersFoundCount, is(0));
 
         client.getOrders().add(buildOrder("21-02-2021"));
         ordersFound = client.findOrdersByDateRange(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT), Utils.parseDate("01-03-2021", Utils.DATE_FORMAT));
         assertThat(ordersFound, notNullValue());
         assertThat(ordersFound.size(), is(1));
+        ordersFoundCount = client.countOrdersByDateRange(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT), Utils.parseDate("01-03-2021", Utils.DATE_FORMAT));
+        assertThat(ordersFoundCount, is(1));
 
         client.getOrders().add(buildOrder("21-03-2021"));
         ordersFound = client.findOrdersByDateRange(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT), Utils.parseDate("01-03-2021", Utils.DATE_FORMAT));
         assertThat(ordersFound, notNullValue());
         assertThat(ordersFound.size(), is(1));
+        ordersFoundCount = client.countOrdersByDateRange(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT), Utils.parseDate("01-03-2021", Utils.DATE_FORMAT));
+        assertThat(ordersFoundCount, is(1));
 
         client.getOrders().add(buildOrder("15-02-2021"));
         ordersFound = client.findOrdersByDateRange(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT), Utils.parseDate("01-03-2021", Utils.DATE_FORMAT));
         assertThat(ordersFound, notNullValue());
         assertThat(ordersFound.size(), is(2));
+        ordersFoundCount = client.countOrdersByDateRange(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT), Utils.parseDate("01-03-2021", Utils.DATE_FORMAT));
+        assertThat(ordersFoundCount, is(2));
 
     }
 
