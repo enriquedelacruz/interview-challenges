@@ -2,8 +2,10 @@ package com.inatlas.challenge;
 
 import com.inatlas.challenge.products.Menu;
 import com.inatlas.challenge.products.Product;
+import com.inatlas.challenge.utils.Utils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 //Singleton class for CoffeeShop
@@ -108,12 +110,41 @@ public class CoffeeShop {
     }
 
     public void printDailyProductsSold(Date day) {
+
         if (day != null) {
             Order dailyOrderSummary = listDailyProductsSold(day);
             if (dailyOrderSummary != null) {
                 Printer.getInstance().printDailyProductsSold(dailyOrderSummary);
             }
         }
+
+    }
+
+    public Double calculateDailyClientAverageExpense(Date date) {
+
+        AtomicReference<Double> average = new AtomicReference<>(0.0);
+        AtomicReference<Integer> totalDailyClients = new AtomicReference<>(0);
+        if (date != null) {
+            this.clients.stream()
+                    .forEach(
+                            client -> {
+                                List<Order> clientOrders = client.findOrdersByDateRange(date, date);
+                                if (clientOrders != null && !clientOrders.isEmpty()) {
+                                    Double totalByClient = clientOrders.stream()
+                                            .map(o -> o.calculateTotal())
+                                            .reduce((a, b) -> a + b).orElse(0.0);
+
+                                    average.getAndSet(average.get() + totalByClient);
+                                    totalDailyClients.getAndSet(totalDailyClients.get() + 1);
+                                }
+                            }
+                    );
+
+            average.set(Utils.formatDouble(average.get() / (double)totalDailyClients.get()));
+        }
+
+        return average.get();
+
     }
 
 }

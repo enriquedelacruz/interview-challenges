@@ -105,13 +105,13 @@ public class CoffeeShopTest {
     }
 
     @Test
-    public void testCoffeeShopReports() {
+    public void testCoffeeShopDailyProductsSold() {
 
         Order dailyOrderSummary = CoffeeShop.getInstance().listDailyProductsSold(Utils.parseDate(null, Utils.DATE_FORMAT));
         Printer.getInstance().printDailyProductsSold(dailyOrderSummary);
 
         final String TODAY = "04-03-2021";
-        for (int i=0; i<10; i++) {
+        for (int i = 0; i < 10; i++) {
             CoffeeShop.getInstance().getClients().add(buildClient(TODAY));
         }
         final Date todayDate = Utils.parseDate(TODAY, Utils.DATE_FORMAT);
@@ -125,6 +125,44 @@ public class CoffeeShopTest {
         assertThat(dailyOrderSummary.getTotal(), is(0.0));
         CoffeeShop.getInstance().printDailyProductsSold(Utils.parseDate("01-02-2021", Utils.DATE_FORMAT));
         //This should print a receipt with 0 products sold
+
+    }
+
+    @Test
+    public void testCoffeeShopDailyAverage() {
+
+        Double dailyAverageExpense = CoffeeShop.getInstance().calculateDailyClientAverageExpense(null);
+        assertThat(dailyAverageExpense, is(0.0));
+
+        final String TODAY = "04-03-2021";
+        for (int i = 0; i < 10; i++) {
+            CoffeeShop.getInstance().getClients().add(buildClient(TODAY));
+        }
+        final Date todayDate = Utils.parseDate(TODAY, Utils.DATE_FORMAT);
+
+        //We have 10 clients with 1 order of 18.6 each client
+        dailyAverageExpense = CoffeeShop.getInstance().calculateDailyClientAverageExpense(todayDate);
+        assertThat(dailyAverageExpense, is(18.6));
+
+        //Adds new 10 orders with other date, this should not change the daily average
+        for (int i=0; i<10; i++) {
+            CoffeeShop.getInstance().getClients().add(buildClient("05-03-2021"));
+        }
+
+        //We still have average of 18.6
+        dailyAverageExpense = CoffeeShop.getInstance().calculateDailyClientAverageExpense(todayDate);
+        assertThat(dailyAverageExpense, is(18.6));
+
+        //Adds an order to change the daily average
+        Client lastClient = new Client();
+        lastClient.getOrders().get(0).setDate(todayDate);
+        lastClient.getOrders().get(0).takeOrder(Menu.MenuProduct.CAKE_SLICE, 10);
+        lastClient.getOrders().get(0).takeOrder(Menu.MenuProduct.TEA, 5);
+        CoffeeShop.getInstance().getClients().add(lastClient);
+
+        //10 clients with 18.6 order each client  +  1 client with a 120.5 order ($9x10 + $6.1x5) - 5% promo = 300.48 / 11 clients = 27.32 average
+        dailyAverageExpense = CoffeeShop.getInstance().calculateDailyClientAverageExpense(todayDate);
+        assertThat(dailyAverageExpense, is(27.32));
 
     }
 
