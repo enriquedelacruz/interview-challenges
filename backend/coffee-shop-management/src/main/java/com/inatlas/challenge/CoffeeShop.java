@@ -8,22 +8,49 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-//Singleton class for CoffeeShop
+/**
+ * Singleton class for CoffeeShop. It represents the coffeeShop object.
+ * Every app in each isolated JVM can be a different shop.
+ */
 public class CoffeeShop {
 
+    /**
+     * CURRENCY config constant of coffee shop
+     */
+    public static final String CURRENCY = "$";
+
+    /**
+     * Instance of CoffeeShop to implements the singleton
+     */
     private static CoffeeShop coffeeShopInstance;
+    /**
+     * List of coffee shop clients
+     */
     private List<Client> clients;
 
     //Constructors
+
+    /**
+     * Default constructors. Initializes the client list
+     */
     public CoffeeShop() {
         this.clients = new ArrayList<>();
     }
 
+    /**
+     * Constructor to assign a client list
+     * @param clients client list to be initializated
+     */
     public CoffeeShop(final List<Client> clients) {
         this.clients = clients;
     }
 
     //Getters and Setters
+
+    /**
+     * Method to get the singleton instance of CoffeeShop
+     * @return the CoffeeShop instance
+     */
     public static synchronized CoffeeShop getInstance() {
         if (coffeeShopInstance == null) {
             coffeeShopInstance = new CoffeeShop();
@@ -31,23 +58,44 @@ public class CoffeeShop {
         return coffeeShopInstance;
     }
 
+    /**
+     * Getter method to get the client list
+     * @return shop client list
+     */
     public List<Client> getClients() {
         return clients;
     }
 
+    /**
+     * Setter method to set the client list
+     * @param clients shop client list
+     */
     public void setClients(final List<Client> clients) {
         this.clients = clients;
     }
 
     //Public methods
+
+    /**
+     * Method to print the whole menu
+     */
     public void printMenu() {
         CoffeeShopMenu.printMenu();
     }
 
+    /**
+     * Method to add a new client to the coffee shop
+     */
     public void registerNewClient() {
         clients.add(new Client());
     }
 
+    /**
+     * Method to count the number of clients whith orders in a date range
+     * @param beginDate inclusive begin date of range
+     * @param endDate inclusive end date of range
+     * @return the number of clients whith orders in a date range
+     */
     public int countClientsByDateRange(final Date beginDate, final Date endDate) {
 
         int count = 0;
@@ -61,6 +109,11 @@ public class CoffeeShop {
 
     }
 
+    /**
+     * Method to generate a 'virtual' Order, as report, to store the daily products sold in a specific day
+     * @param day the specific day to generate the daily report
+     * @return a 'virtual' Order, as daily report of products sold
+     */
     public Order listDailyProductsSold(final Date day) {
 
         //First gets the order list of the day
@@ -92,7 +145,7 @@ public class CoffeeShop {
                     .forEach(
                             mp -> {
                                 final int productQuantity = allDailyProducts.stream()
-                                        .filter(p -> p.getName() == mp)
+                                        .filter(p -> p.getMenuProduct() == mp)
                                         .map(Product::getQuantity)
                                         .reduce((a,b) -> a + b).orElse(0);
 
@@ -106,6 +159,10 @@ public class CoffeeShop {
 
     }
 
+    /**
+     * Method to print the daily products sold in a specific day
+     * @param day the specific day to generate the daily report
+     */
     public void printDailyProductsSold(final Date day) {
 
         if (day != null) {
@@ -117,6 +174,11 @@ public class CoffeeShop {
 
     }
 
+    /**
+     * Method to calculate the daily client average expense
+     * @param date the specific day to generate the daily report
+     * @return the average of client daily expense
+     */
     public Double calculateDailyClientAverageExpense(final Date date) {
 
         final AtomicReference<Double> average = new AtomicReference<>(0.0);
@@ -127,16 +189,20 @@ public class CoffeeShop {
                             client -> {
                                 final List<Order> clientOrders = client.findOrdersByDateRange(date, date);
                                 if (clientOrders != null && !clientOrders.isEmpty()) {
+                                    //Gets the total expense by client
                                     final Double totalByClient = clientOrders.stream()
                                             .map(Order::calculateTotal)
                                             .reduce((a, b) -> a + b).orElse(0.0);
 
+                                    //Adds the expense of the client to will calculate the average
                                     average.getAndSet(average.get() + totalByClient);
+                                    //Adds the count of clients to will calculate the average
                                     totalDailyClients.getAndSet(totalDailyClients.get() + 1);
                                 }
                             }
                     );
 
+            //Calculate and set the average
             average.set(CoffeeShopUtils.formatDouble(average.get() / (double)totalDailyClients.get()));
         }
 

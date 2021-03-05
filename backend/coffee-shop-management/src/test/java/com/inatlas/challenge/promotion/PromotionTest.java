@@ -42,7 +42,7 @@ public class PromotionTest {
         assertThat(total, is(1006.6)); //$4*250 + $5.3*2 - 4(promo)
         espressoPromotion.applyPerProduct(products);
         //Count espressos with discount
-        Long espressosWithDiscount = products.stream().filter(p -> p.getName() == CoffeeShopMenu.MenuProduct.ESPRESSO && p.isDiscount()).count();
+        Long espressosWithDiscount = products.stream().filter(p -> p.getMenuProduct() == CoffeeShopMenu.MenuProduct.ESPRESSO && p.isDiscount()).count();
         assertThat(espressosWithDiscount.intValue(), is(1));
 
 
@@ -58,7 +58,7 @@ public class PromotionTest {
         espressoPromotion.applyPerProduct(products);
         //Count espressos with discount
         espressosWithDiscount = products.stream()
-                .filter(p -> p.getName() == CoffeeShopMenu.MenuProduct.ESPRESSO && p.isDiscount())
+                .filter(p -> p.getMenuProduct() == CoffeeShopMenu.MenuProduct.ESPRESSO && p.isDiscount())
                 .map(Product::getQuantity)
                 .reduce(0, (a, b) -> a + b).longValue();
         assertThat(espressosWithDiscount.intValue(), is(2));
@@ -77,7 +77,7 @@ public class PromotionTest {
         espressoPromotion.applyPerProduct(products);
         //Count espressos with discount
         espressosWithDiscount = products.stream()
-                .filter(p -> p.getName() == CoffeeShopMenu.MenuProduct.ESPRESSO && p.isDiscount())
+                .filter(p -> p.getMenuProduct() == CoffeeShopMenu.MenuProduct.ESPRESSO && p.isDiscount())
                 .map(Product::getQuantity)
                 .reduce(0, (a, b) -> a + b).longValue();
         assertThat(espressosWithDiscount.intValue(), is(2));

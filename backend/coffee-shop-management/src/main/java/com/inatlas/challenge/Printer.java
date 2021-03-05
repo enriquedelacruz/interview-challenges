@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Singleton Printer
+ * Singleton Printer class to print receipts, reports and menu
  */
 public class Printer {
 
+    /**
+     * Config properties for the Printer
+     */
     private static final int COLUMN_WIDTH = 15;
     private static final String MENU_LABEL = "COFFEE SHOP MENU";
     private static final String RECEIPT_LABEL = "RECEIPT";
@@ -22,10 +25,16 @@ public class Printer {
     private static final String PRICE_LABEL = "Price";
     private static final String TOTAL_LABEL = "Total";
     private static final String PROMOTION_LABEL = "(*) Promotion";
-    private static final String CURRENCY = Order.CURRENCY;
 
+    /**
+     * Instance property for singleton class
+     */
     private static Printer printerInstance;
 
+    /**
+     * Method to get the singleton instance for Printer
+     * @return
+     */
     public static synchronized  Printer getInstance() {
         if (printerInstance == null) {
             printerInstance = new Printer();
@@ -33,14 +42,27 @@ public class Printer {
         return printerInstance;
     }
 
-    public void printReceipt(final List<Product> orders, final double total, final String appliedPromotion) {
-        print(createReceipt(RECEIPT_LABEL, null, orders, total, appliedPromotion));
+    /**
+     * Method to print the receipt of an order
+     * @param products product list of the order to be printed
+     * @param total total price of the order
+     * @param appliedPromotion name of the applied promotion
+     */
+    public void printReceipt(final List<Product> products, final double total, final String appliedPromotion) {
+        print(createReceipt(RECEIPT_LABEL, null, products, total, appliedPromotion));
     }
 
+    /**
+     * Method to print the daily products sold report
+     * @param dailyProductSold 'virtual' order that stores the report data to be printed
+     */
     public void printDailyProductsSold(final Order dailyProductSold) {
         print(createDailyProductsSold(dailyProductSold));
     }
 
+    /**
+     * Method to print the whole menu
+     */
     public void printMenu() {
         print(createMenu());
     }
@@ -57,6 +79,12 @@ public class Printer {
 
 
     //Private methods
+
+    /**
+     * Method to create the text to be printed for the daily products sold report
+     * @param dailyProductSold 'virtual' order that storages the report information
+     * @return string text of the report to be printed
+     */
     private String createDailyProductsSold(final Order dailyProductSold) {
         String output = "";
         if (dailyProductSold != null) {
@@ -69,18 +97,27 @@ public class Printer {
         return output;
     }
 
-    private String createReceipt(final String title, final String date, final List<Product> orders, final double total, final String promotionApplied) {
+    /**
+     * Method to create the text to be printed for the order receipt
+     * @param title title of the receipt
+     * @param date date of the order
+     * @param products product list of the order
+     * @param total total price of the order
+     * @param promotionApplied name of the applied promotion
+     * @return string text of the receipt to be printed
+     */
+    private String createReceipt(final String title, final String date, final List<Product> products, final double total, final String promotionApplied) {
         //Header
         final StringBuilder sbReceipt = new StringBuilder(createHeader(title, date, Arrays.asList(PRODUCT_LABEL, PRICE_LABEL)));
 
-        if (orders != null && !orders.isEmpty()) {
+        if (products != null && !products.isEmpty()) {
             //Body
-            sbReceipt.append(orders.stream()
+            sbReceipt.append(products.stream()
                     .map(p -> {
-                        final String productNameAnQuantity = p.getQuantity() + " " + p.getName().getName();
+                        final String productNameAnQuantity = p.getQuantity() + " " + p.getMenuProduct().getName();
                         return productNameAnQuantity
                                 + repeatString(".", COLUMN_WIDTH - productNameAnQuantity.length() + 1)
-                                + CURRENCY + " " + CoffeeShopUtils.formatDouble(p.getPrice()) + ((p.isDiscount())?" (*)":"");
+                                + CoffeeShop.CURRENCY + " " + CoffeeShopUtils.formatDouble(p.getPrice()) + ((p.isDiscount())?" (*)":"");
                     })
                     .collect(Collectors.joining("\n")));
             sbReceipt.append("\n");
@@ -91,7 +128,7 @@ public class Printer {
         sbReceipt.append("\n");
         sbReceipt.append(TOTAL_LABEL);
         sbReceipt.append(repeatString(".", COLUMN_WIDTH - TOTAL_LABEL.length() + 1));
-        sbReceipt.append(CURRENCY);
+        sbReceipt.append(CoffeeShop.CURRENCY);
         sbReceipt.append(" ");
         sbReceipt.append(total);
         sbReceipt.append("\n");
@@ -111,6 +148,11 @@ public class Printer {
         return sbReceipt.toString();
     }
 
+    /**
+     * Method to create the text to be printed for the menu. This prints all the products with prices
+     * and the available promotions
+     * @return string text of the menu to be printed
+     */
     private String createMenu() {
         //Header
         final StringBuilder sbMenu = new StringBuilder(createHeader(MENU_LABEL, null, Arrays.asList(PRODUCT_LABEL, PRICE_LABEL)));
@@ -119,7 +161,7 @@ public class Printer {
         sbMenu.append(Arrays.stream(CoffeeShopMenu.MenuProduct.values())
                 .map(p -> p.getName()
                             + repeatString(".", COLUMN_WIDTH - p.getName().length() + 1)
-                            + CURRENCY + " " + p.getPrice())
+                            + CoffeeShop.CURRENCY + " " + p.getPrice())
                 .collect(Collectors.joining("\n")));
         sbMenu.append("\n");
 
@@ -140,6 +182,13 @@ public class Printer {
         return sbMenu.toString();
     }
 
+    /**
+     * Method to create the text to be printed of the receipt, report or menu header
+     * @param title header title
+     * @param date date to be printed
+     * @param columns columns of the receipt, report or menu
+     * @return string text of the header to be printed
+     */
     private String createHeader(final String title, final String date, final List<String> columns) {
         final StringBuilder sbHeader = new StringBuilder();
         if (columns != null && !columns.isEmpty()) {
@@ -172,6 +221,12 @@ public class Printer {
         return sbHeader.toString();
     }
 
+    /**
+     * Method to create blank spaces to be printed. It is used to print separate lines or center texts
+     * @param stringToRepeat string to be repeated
+     * @param repetitions repetitions number of the string param to be returned
+     * @return a string joining the param string repeated
+     */
     private String repeatString(final String stringToRepeat, final int repetitions) {
         String outputString = null;
         if (stringToRepeat != null) {
