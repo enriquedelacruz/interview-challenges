@@ -33,10 +33,6 @@ public class Printer {
         return printerInstance;
     }
 
-    public void printReceipt(final Order order) {
-        print(createReceipt(order));
-    }
-
     public void printReceipt(final List<Product> orders, final double total, final String appliedPromotion) {
         print(createReceipt(RECEIPT_LABEL, null, orders, total, appliedPromotion));
     }
@@ -73,17 +69,6 @@ public class Printer {
         return output;
     }
 
-    private String createReceipt(final Order order) {
-        String output = "";
-        if (order != null) {
-            if (order.getTotal() == 0.0) {
-                order.calculateTotal();
-            }
-            output = createReceipt(RECEIPT_LABEL, CoffeeShopUtils.formatDate(order.getDate()), order.getProducts(), order.getTotal(), order.getAppliedPromotion());
-        }
-        return output;
-    }
-
     private String createReceipt(final String title, final String date, final List<Product> orders, final double total, final String promotionApplied) {
         //Header
         final StringBuilder sbReceipt = new StringBuilder(createHeader(title, date, Arrays.asList(PRODUCT_LABEL, PRICE_LABEL)));
@@ -97,20 +82,31 @@ public class Printer {
                                 + repeatString(".", COLUMN_WIDTH - productNameAnQuantity.length() + 1)
                                 + CURRENCY + " " + CoffeeShopUtils.formatDouble(p.getPrice()) + ((p.isDiscount())?" (*)":"");
                     })
-                    .collect(Collectors.joining("\n")) + "\n");
+                    .collect(Collectors.joining("\n")));
+            sbReceipt.append("\n");
         }
 
         //Total
-        sbReceipt.append(repeatString("-", COLUMN_WIDTH * 2) + "\n");
-        sbReceipt.append(TOTAL_LABEL + repeatString(".", COLUMN_WIDTH - TOTAL_LABEL.length() + 1) + CURRENCY + " " + total + "\n");
+        sbReceipt.append(repeatString("-", COLUMN_WIDTH * 2));
+        sbReceipt.append("\n");
+        sbReceipt.append(TOTAL_LABEL);
+        sbReceipt.append(repeatString(".", COLUMN_WIDTH - TOTAL_LABEL.length() + 1));
+        sbReceipt.append(CURRENCY);
+        sbReceipt.append(" ");
+        sbReceipt.append(total);
+        sbReceipt.append("\n");
 
         //Promotion
         if (promotionApplied != null && !promotionApplied.isEmpty()) {
-            sbReceipt.append(PROMOTION_LABEL + ": " + promotionApplied + "\n");
+            sbReceipt.append(PROMOTION_LABEL);
+            sbReceipt.append(": ");
+            sbReceipt.append(promotionApplied);
+            sbReceipt.append("\n");
         }
 
         //Footer
-        sbReceipt.append(repeatString("=", COLUMN_WIDTH * 2) + "\n");
+        sbReceipt.append(repeatString("=", COLUMN_WIDTH * 2));
+        sbReceipt.append("\n");
 
         return sbReceipt.toString();
     }
@@ -124,17 +120,22 @@ public class Printer {
                 .map(p -> p.getName()
                             + repeatString(".", COLUMN_WIDTH - p.getName().length() + 1)
                             + CURRENCY + " " + p.getPrice())
-                .collect(Collectors.joining("\n")) + "\n");
+                .collect(Collectors.joining("\n")));
+        sbMenu.append("\n");
 
         //Promotions
-        sbMenu.append(repeatString("-", COLUMN_WIDTH * 2) + "\n");
-        sbMenu.append(PROMOTIONS_LABEL + "\n");
+        sbMenu.append(repeatString("-", COLUMN_WIDTH * 2));
+        sbMenu.append("\n");
+        sbMenu.append(PROMOTIONS_LABEL);
+        sbMenu.append("\n");
         sbMenu.append(CoffeeShopMenu.getAvailablePromotions().stream()
                 .map(p -> " - " + p.getName())
-                .collect(Collectors.joining("\n")) + "\n");
+                .collect(Collectors.joining("\n")));
+        sbMenu.append("\n");
 
         //Footer
-        sbMenu.append(repeatString("=", COLUMN_WIDTH * 2) + "\n");
+        sbMenu.append(repeatString("=", COLUMN_WIDTH * 2));
+        sbMenu.append("\n");
 
         return sbMenu.toString();
     }
@@ -143,21 +144,29 @@ public class Printer {
         final StringBuilder sbHeader = new StringBuilder();
         if (columns != null && !columns.isEmpty()) {
             final int headerWidth = COLUMN_WIDTH * columns.size();
-            sbHeader.append(repeatString("=", headerWidth) + "\n");
+            sbHeader.append(repeatString("=", headerWidth));
+            sbHeader.append("\n");
             //Title
-            sbHeader.append(repeatString(" ", (headerWidth - title.length()) / 2) + title + "\n");
+            sbHeader.append(repeatString(" ", (headerWidth - title.length()) / 2));
+            sbHeader.append(title);
+            sbHeader.append("\n");
             if (date != null) {
-                sbHeader.append(repeatString(" ", (headerWidth - date.length()) / 2) + date + "\n");
+                sbHeader.append(repeatString(" ", (headerWidth - date.length()) / 2));
+                sbHeader.append(date);
+                sbHeader.append("\n");
             }
-            sbHeader.append(repeatString("-", headerWidth) + "\n");
+            sbHeader.append(repeatString("-", headerWidth));
+            sbHeader.append("\n");
 
             //Columns
             for (final String column : columns) {
-                sbHeader.append(column + repeatString(" ", COLUMN_WIDTH - column.length() + 1));
+                sbHeader.append(column);
+                sbHeader.append(repeatString(" ", COLUMN_WIDTH - column.length() + 1));
             }
             sbHeader.append("\n");
 
-            sbHeader.append(repeatString("-", headerWidth) + "\n");
+            sbHeader.append(repeatString("-", headerWidth));
+            sbHeader.append("\n");
         }
 
         return sbHeader.toString();
