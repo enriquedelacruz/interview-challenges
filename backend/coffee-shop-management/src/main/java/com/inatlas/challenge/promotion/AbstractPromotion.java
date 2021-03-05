@@ -1,23 +1,23 @@
 package com.inatlas.challenge.promotion;
 
 import com.inatlas.challenge.products.Product;
-import com.inatlas.challenge.utils.Utils;
+import com.inatlas.challenge.utils.CoffeeShopUtils;
 
 import java.util.List;
 
 public abstract class AbstractPromotion {
 
     protected String name;
-    protected boolean isPerProduct = false;
+    protected boolean perProduct = false;
 
     //Constructors
-    public AbstractPromotion(String name) {
+    protected AbstractPromotion(final String name) {
         this.name = name;
     }
 
-    public AbstractPromotion(String name, boolean isPerProduct) {
+    protected AbstractPromotion(final String name, final boolean perProduct) {
         this.name = name;
-        this.isPerProduct = isPerProduct;
+        this.perProduct = perProduct;
     }
 
     //Getter and Setters
@@ -26,7 +26,7 @@ public abstract class AbstractPromotion {
     }
 
     public boolean isPerProduct() {
-        return isPerProduct;
+        return perProduct;
     }
 
     //Abstract methods
@@ -35,14 +35,13 @@ public abstract class AbstractPromotion {
     public abstract boolean isSuitable(List<Product> products);
 
     //Common public methods
-    public static Double calculateOriginalTotal(List<Product> products) {
+    public static Double calculateOriginalTotal(final List<Product> products) {
         //Calculates order total price
-        Double total = products.stream()
-                .map(p -> {
-                    return p.getName().getPrice() * p.getQuantity();
-                }).reduce(0.0, (a, b) -> a + b);
+        final Double total = products.stream()
+                .map(p -> p.getName().getPrice() * p.getQuantity())
+                .reduce(0.0, (a, b) -> a + b);
 
-        return Utils.formatDouble(total);
+        return CoffeeShopUtils.formatDouble(total);
     }
 
 }

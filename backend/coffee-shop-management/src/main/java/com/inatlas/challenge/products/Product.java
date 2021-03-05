@@ -1,29 +1,29 @@
 package com.inatlas.challenge.products;
 
 
-import com.inatlas.challenge.utils.Utils;
+import com.inatlas.challenge.utils.CoffeeShopUtils;
 
 public class Product {
 
-    private Menu.MenuProduct name;
+    private final CoffeeShopMenu.MenuProduct name;
     private Integer quantity;
     private boolean discount;
     private Double promoPrice;
 
-    public Product(Menu.MenuProduct name, Integer qtt) {
+    public Product(final CoffeeShopMenu.MenuProduct name, final Integer qtt) {
         this.name = name;
         this.quantity = qtt;
         this.promoPrice = name.getPrice();
     }
 
-    public Product(Menu.MenuProduct name, Integer qtt, boolean discount) {
+    public Product(final CoffeeShopMenu.MenuProduct name, final Integer qtt, final boolean discount) {
         this.name = name;
         this.quantity = qtt;
         this.discount = discount;
         this.promoPrice = name.getPrice();
     }
 
-    public Product(Menu.MenuProduct name, Integer qtt, boolean discount, Double promoPrice) {
+    public Product(final CoffeeShopMenu.MenuProduct name, final Integer qtt, final boolean discount, final Double promoPrice) {
         this.name = name;
         this.quantity = qtt;
         this.discount = discount;
@@ -39,21 +39,21 @@ public class Product {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(final Integer quantity) {
         this.quantity = quantity;
     }
 
-    public Menu.MenuProduct getName() {
+    public CoffeeShopMenu.MenuProduct getName() {
         return name;
     }
 
     public Double getPrice() {
-        Double price = 0.0;
+        Double price;
 
-        if (!discount) {
-            price = Utils.formatDouble(this.name.getPrice()) * this.quantity;
+        if (discount) {
+            price = CoffeeShopUtils.formatDouble(this.promoPrice) * this.quantity;
         } else {
-            price = Utils.formatDouble(this.promoPrice) * this.quantity;
+            price = CoffeeShopUtils.formatDouble(this.name.getPrice()) * this.quantity;
         }
 
         return price;
@@ -63,7 +63,7 @@ public class Product {
         return discount;
     }
 
-    public void setDiscount(boolean discount) {
+    public void setDiscount(final boolean discount) {
         this.discount = discount;
     }
 
@@ -71,7 +71,7 @@ public class Product {
         return promoPrice;
     }
 
-    public void setPromoPrice(Double promoPrice) {
+    public void setPromoPrice(final Double promoPrice) {
         this.promoPrice = promoPrice;
     }
 }

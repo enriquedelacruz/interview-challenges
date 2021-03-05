@@ -1,8 +1,8 @@
 package com.inatlas.challenge;
 
-import com.inatlas.challenge.products.Menu;
+import com.inatlas.challenge.products.CoffeeShopMenu;
 import com.inatlas.challenge.products.Product;
-import com.inatlas.challenge.utils.Utils;
+import com.inatlas.challenge.utils.CoffeeShopUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,27 +24,24 @@ public class Printer {
     private static final String PROMOTION_LABEL = "(*) Promotion";
     private static final String CURRENCY = Order.CURRENCY;
 
-    private static Printer printer;
+    private static Printer printerInstance;
 
-    public Printer() {
-    }
-
-    synchronized public static Printer getInstance() {
-        if (printer == null) {
-            printer = new Printer();
+    public static synchronized  Printer getInstance() {
+        if (printerInstance == null) {
+            printerInstance = new Printer();
         }
-        return printer;
+        return printerInstance;
     }
 
-    public void printReceipt(Order order) {
+    public void printReceipt(final Order order) {
         print(createReceipt(order));
     }
 
-    public void printReceipt(List<Product> orders, double total, String appliedPromotion) {
+    public void printReceipt(final List<Product> orders, final double total, final String appliedPromotion) {
         print(createReceipt(RECEIPT_LABEL, null, orders, total, appliedPromotion));
     }
 
-    public void printDailyProductsSold(Order dailyProductSold) {
+    public void printDailyProductsSold(final Order dailyProductSold) {
         print(createDailyProductsSold(dailyProductSold));
     }
 
@@ -57,48 +54,48 @@ public class Printer {
      * The output can be change easily (file, email, etc) and transforms this printer in another
      * @param output
      */
-    public void print(String output) {
+    public void print(final String output) {
         //Prints through standard output
         System.out.println(output);
     }
 
 
     //Private methods
-    private String createDailyProductsSold(Order dailyProductSold) {
+    private String createDailyProductsSold(final Order dailyProductSold) {
         String output = "";
         if (dailyProductSold != null) {
             if (dailyProductSold.getTotal() == 0.0) {
                 dailyProductSold.calculateTotalWithoutPromotions();
             }
             //Create a special receipt without promotions
-            output = createReceipt(DAILY_REPORT_LABEL, Utils.formatDate(dailyProductSold.getDate()), dailyProductSold.getProducts(), dailyProductSold.getTotal(), null);
+            output = createReceipt(DAILY_REPORT_LABEL, CoffeeShopUtils.formatDate(dailyProductSold.getDate()), dailyProductSold.getProducts(), dailyProductSold.getTotal(), null);
         }
         return output;
     }
 
-    private String createReceipt(Order order) {
+    private String createReceipt(final Order order) {
         String output = "";
         if (order != null) {
             if (order.getTotal() == 0.0) {
                 order.calculateTotal();
             }
-            output = createReceipt(RECEIPT_LABEL, Utils.formatDate(order.getDate()), order.getProducts(), order.getTotal(), order.getAppliedPromotion());
+            output = createReceipt(RECEIPT_LABEL, CoffeeShopUtils.formatDate(order.getDate()), order.getProducts(), order.getTotal(), order.getAppliedPromotion());
         }
         return output;
     }
 
-    private String createReceipt(String title, String date,  List<Product> orders, double total, String promotionApplied) {
+    private String createReceipt(final String title, final String date, final List<Product> orders, final double total, final String promotionApplied) {
         //Header
-        StringBuilder sbReceipt = new StringBuilder(createHeader(title, date, Arrays.asList(new String[] { PRODUCT_LABEL, PRICE_LABEL})));
+        final StringBuilder sbReceipt = new StringBuilder(createHeader(title, date, Arrays.asList(PRODUCT_LABEL, PRICE_LABEL)));
 
         if (orders != null && !orders.isEmpty()) {
             //Body
             sbReceipt.append(orders.stream()
                     .map(p -> {
-                        String productNameAnQuantity = p.getQuantity() + " " + p.getName().getName();
+                        final String productNameAnQuantity = p.getQuantity() + " " + p.getName().getName();
                         return productNameAnQuantity
                                 + repeatString(".", COLUMN_WIDTH - productNameAnQuantity.length() + 1)
-                                + CURRENCY + " " + Utils.formatDouble(p.getPrice()) + ((p.isDiscount())?" (*)":"");
+                                + CURRENCY + " " + CoffeeShopUtils.formatDouble(p.getPrice()) + ((p.isDiscount())?" (*)":"");
                     })
                     .collect(Collectors.joining("\n")) + "\n");
         }
@@ -120,24 +117,20 @@ public class Printer {
 
     private String createMenu() {
         //Header
-        StringBuilder sbMenu = new StringBuilder(createHeader(MENU_LABEL, null, Arrays.asList(new String[] { PRODUCT_LABEL, PRICE_LABEL})));
+        final StringBuilder sbMenu = new StringBuilder(createHeader(MENU_LABEL, null, Arrays.asList(PRODUCT_LABEL, PRICE_LABEL)));
 
         //Body
-        sbMenu.append(Arrays.stream(Menu.MenuProduct.values())
-                .map(p -> {
-                    return p.getName()
+        sbMenu.append(Arrays.stream(CoffeeShopMenu.MenuProduct.values())
+                .map(p -> p.getName()
                             + repeatString(".", COLUMN_WIDTH - p.getName().length() + 1)
-                            + CURRENCY + " " + p.getPrice();
-                })
+                            + CURRENCY + " " + p.getPrice())
                 .collect(Collectors.joining("\n")) + "\n");
 
         //Promotions
         sbMenu.append(repeatString("-", COLUMN_WIDTH * 2) + "\n");
         sbMenu.append(PROMOTIONS_LABEL + "\n");
-        sbMenu.append(Menu.availablePromotions.stream()
-                .map(p -> {
-                    return " - " + p.getName();
-                })
+        sbMenu.append(CoffeeShopMenu.getAvailablePromotions().stream()
+                .map(p -> " - " + p.getName())
                 .collect(Collectors.joining("\n")) + "\n");
 
         //Footer
@@ -146,10 +139,10 @@ public class Printer {
         return sbMenu.toString();
     }
 
-    private String createHeader(String title, String date, List<String> columns) {
-        StringBuilder sbHeader = new StringBuilder();
+    private String createHeader(final String title, final String date, final List<String> columns) {
+        final StringBuilder sbHeader = new StringBuilder();
         if (columns != null && !columns.isEmpty()) {
-            int headerWidth = COLUMN_WIDTH * columns.size();
+            final int headerWidth = COLUMN_WIDTH * columns.size();
             sbHeader.append(repeatString("=", headerWidth) + "\n");
             //Title
             sbHeader.append(repeatString(" ", (headerWidth - title.length()) / 2) + title + "\n");
@@ -159,7 +152,7 @@ public class Printer {
             sbHeader.append(repeatString("-", headerWidth) + "\n");
 
             //Columns
-            for (String column : columns) {
+            for (final String column : columns) {
                 sbHeader.append(column + repeatString(" ", COLUMN_WIDTH - column.length() + 1));
             }
             sbHeader.append("\n");
@@ -170,10 +163,11 @@ public class Printer {
         return sbHeader.toString();
     }
 
-    private String repeatString(String stringToRepeat, int n) {
+    private String repeatString(final String stringToRepeat, final int repetitions) {
+        String outputString = null;
         if (stringToRepeat != null) {
-            return new String(new char[n]).replace("\0", stringToRepeat);
+            outputString = new String(new char[repetitions]).replace("\0", stringToRepeat);
         }
-        return null;
+        return outputString;
     }
 }

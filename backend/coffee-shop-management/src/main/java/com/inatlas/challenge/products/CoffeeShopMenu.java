@@ -9,9 +9,9 @@ import com.inatlas.challenge.promotion.TotalProductsPromotion;
 import java.util.Arrays;
 import java.util.List;
 
-public class Menu {
+public class CoffeeShopMenu {
 
-    public static enum MenuProduct {
+    public enum MenuProduct {
         SANDWICH("Sandwich", 10.10),
         LATTE("Latte", 5.3),
         ESPRESSO("Espresso", 4.0),
@@ -23,9 +23,9 @@ public class Menu {
         String name;
         double price;
 
-        MenuProduct(String n, double p) {
-            name = n;
-            price = p;
+        MenuProduct(final String name, final double price) {
+            this.name = name;
+            this.price = price;
         }
 
         public String getName() {
@@ -37,11 +37,15 @@ public class Menu {
         }
     }
 
-    public static final List<AbstractPromotion> availablePromotions = Arrays.asList(
+    protected static final List<AbstractPromotion> availablePromotions = Arrays.asList(
             new EspressoPromotion("1FreeEspresso x 2Lattes"),
             new TotalProductsPromotion("5%off x 8products"),
             new TotalAmountPromotion("$3Latte x $50order")
     );
+
+    public static List<AbstractPromotion> getAvailablePromotions() {
+        return availablePromotions;
+    }
 
     public static void printMenu() {
         // Print whole menu

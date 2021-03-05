@@ -25,7 +25,7 @@ public class Client {
         if (this.orders == null) {
             this.orders = new ArrayList<>();
         }
-        Order newOrder = new Order();
+        final Order newOrder = new Order();
         this.orders.add(newOrder);
 
         return newOrder;
@@ -35,7 +35,7 @@ public class Client {
         orders.stream().forEach(Order::printReceipt);
     }
 
-    public List<Order> findOrdersByDateRange(Date beginDate, Date endDate) {
+    public List<Order> findOrdersByDateRange(final Date beginDate, final Date endDate) {
 
         List<Order> ordersFound = new ArrayList<>();
         if (beginDate != null && endDate != null ) {
@@ -48,11 +48,11 @@ public class Client {
 
     }
 
-    public int countOrdersByDateRange(Date beginDate, Date endDate) {
+    public int countOrdersByDateRange(final Date beginDate, final Date endDate) {
 
         int count = 0;
         if (beginDate != null && endDate != null) {
-            List<Order> ordersFound = findOrdersByDateRange(beginDate, endDate);
+            final List<Order> ordersFound = findOrdersByDateRange(beginDate, endDate);
             if (ordersFound != null) {
                 count = ordersFound.size();
             }

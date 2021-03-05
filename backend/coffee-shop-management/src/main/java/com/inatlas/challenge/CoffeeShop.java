@@ -1,8 +1,8 @@
 package com.inatlas.challenge;
 
-import com.inatlas.challenge.products.Menu;
+import com.inatlas.challenge.products.CoffeeShopMenu;
 import com.inatlas.challenge.products.Product;
-import com.inatlas.challenge.utils.Utils;
+import com.inatlas.challenge.utils.CoffeeShopUtils;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 //Singleton class for CoffeeShop
 public class CoffeeShop {
 
-    private static CoffeeShop coffeeShop;
+    private static CoffeeShop coffeeShopInstance;
     private List<Client> clients;
 
     //Constructors
@@ -19,36 +19,36 @@ public class CoffeeShop {
         this.clients = new ArrayList<>();
     }
 
-    public CoffeeShop(List<Client> clients) {
+    public CoffeeShop(final List<Client> clients) {
         this.clients = clients;
     }
 
     //Getters and Setters
-    synchronized public static CoffeeShop getInstance() {
-        if (coffeeShop == null) {
-            coffeeShop = new CoffeeShop();
+    public static synchronized CoffeeShop getInstance() {
+        if (coffeeShopInstance == null) {
+            coffeeShopInstance = new CoffeeShop();
         }
-        return coffeeShop;
+        return coffeeShopInstance;
     }
 
     public List<Client> getClients() {
         return clients;
     }
 
-    public void setClients(List<Client> clients) {
+    public void setClients(final List<Client> clients) {
         this.clients = clients;
     }
 
     //Public methods
     public void printMenu() {
-        Menu.printMenu();
+        CoffeeShopMenu.printMenu();
     }
 
     public void registerNewClient() {
         clients.add(new Client());
     }
 
-    public int countClientsByDateRange(Date beginDate, Date endDate) {
+    public int countClientsByDateRange(final Date beginDate, final Date endDate) {
 
         int count = 0;
         if (beginDate != null && endDate != null) {
@@ -61,7 +61,7 @@ public class CoffeeShop {
 
     }
 
-    public Order listDailyProductsSold(Date day) {
+    public Order listDailyProductsSold(final Date day) {
 
         //First gets the order list of the day
         List<Order> dailyOrders = null;
@@ -73,33 +73,30 @@ public class CoffeeShop {
         }
 
         //Second, create an order to put all the products in the menu
-        Order dailyOrderSummary = new Order();
+        final Order dailyOrderSummary = new Order();
         dailyOrderSummary.setDate(day);
-        List<Product> dailyProducts = dailyOrderSummary.getProducts();
-        if (dailyOrders != null && !dailyOrders.isEmpty()) {
-            List<Product> allDailyProducts = dailyOrders.stream()
+        final List<Product> dailyProducts = dailyOrderSummary.getProducts();
+        if (dailyOrders == null || dailyOrders.isEmpty()) {
+            //For each menu product adds a product
+            Arrays.stream(CoffeeShopMenu.MenuProduct.values())
+                    .forEach(mp -> dailyProducts.add(new Product(mp, 0)));
+
+        } else {
+            final List<Product> allDailyProducts = dailyOrders.stream()
                     .map(Order::getProducts)
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());
 
             //For each menu product, sums the quantity of these products that are been sold
-            Arrays.stream(Menu.MenuProduct.values())
+            Arrays.stream(CoffeeShopMenu.MenuProduct.values())
                     .forEach(
                             mp -> {
-                                int productQuantity = allDailyProducts.stream()
+                                final int productQuantity = allDailyProducts.stream()
                                         .filter(p -> p.getName() == mp)
-                                        .map(p -> p.getQuantity())
+                                        .map(Product::getQuantity)
                                         .reduce((a,b) -> a + b).orElse(0);
 
                                 dailyProducts.add(new Product(mp, productQuantity));
-                            }
-                    );
-        } else {
-            //For each menu product adds a product
-            Arrays.stream(Menu.MenuProduct.values())
-                    .forEach(
-                            mp -> {
-                                dailyProducts.add(new Product(mp, 0));
                             }
                     );
         }
@@ -109,10 +106,10 @@ public class CoffeeShop {
 
     }
 
-    public void printDailyProductsSold(Date day) {
+    public void printDailyProductsSold(final Date day) {
 
         if (day != null) {
-            Order dailyOrderSummary = listDailyProductsSold(day);
+            final Order dailyOrderSummary = listDailyProductsSold(day);
             if (dailyOrderSummary != null) {
                 Printer.getInstance().printDailyProductsSold(dailyOrderSummary);
             }
@@ -120,18 +117,18 @@ public class CoffeeShop {
 
     }
 
-    public Double calculateDailyClientAverageExpense(Date date) {
+    public Double calculateDailyClientAverageExpense(final Date date) {
 
-        AtomicReference<Double> average = new AtomicReference<>(0.0);
-        AtomicReference<Integer> totalDailyClients = new AtomicReference<>(0);
+        final AtomicReference<Double> average = new AtomicReference<>(0.0);
+        final AtomicReference<Integer> totalDailyClients = new AtomicReference<>(0);
         if (date != null) {
             this.clients.stream()
                     .forEach(
                             client -> {
-                                List<Order> clientOrders = client.findOrdersByDateRange(date, date);
+                                final List<Order> clientOrders = client.findOrdersByDateRange(date, date);
                                 if (clientOrders != null && !clientOrders.isEmpty()) {
-                                    Double totalByClient = clientOrders.stream()
-                                            .map(o -> o.calculateTotal())
+                                    final Double totalByClient = clientOrders.stream()
+                                            .map(Order::calculateTotal)
                                             .reduce((a, b) -> a + b).orElse(0.0);
 
                                     average.getAndSet(average.get() + totalByClient);
@@ -140,7 +137,7 @@ public class CoffeeShop {
                             }
                     );
 
-            average.set(Utils.formatDouble(average.get() / (double)totalDailyClients.get()));
+            average.set(CoffeeShopUtils.formatDouble(average.get() / (double)totalDailyClients.get()));
         }
 
         return average.get();

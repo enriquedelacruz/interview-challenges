@@ -1,6 +1,6 @@
 package com.inatlas.challenge;
 
-import com.inatlas.challenge.products.Menu;
+import com.inatlas.challenge.products.CoffeeShopMenu;
 import com.inatlas.challenge.products.Product;
 import com.inatlas.challenge.promotion.AbstractPromotion;
 
@@ -29,7 +29,7 @@ public class Order {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(final List<Product> products) {
         this.products = products;
     }
 
@@ -41,7 +41,7 @@ public class Order {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(final Date date) {
         this.date = date;
     }
 
@@ -50,7 +50,7 @@ public class Order {
     }
 
     //Public methods
-    public void takeOrder(Menu.MenuProduct product, Integer quantity) {
+    public void takeOrder(final CoffeeShopMenu.MenuProduct product, final Integer quantity) {
         this.products.add(new Product(product, quantity));
     }
 
@@ -60,19 +60,19 @@ public class Order {
     }
 
     public Double calculateTotal() {
-        AbstractPromotion cheapestPromotion = Menu.availablePromotions.stream()
+        final AbstractPromotion cheapestPromotion = CoffeeShopMenu.getAvailablePromotions().stream()
                 .filter(p -> p.isSuitable(this.products))
                 .min(Comparator.comparingDouble(x -> x.calculateTotal(this.products))).orElse(null);
 
-        if (cheapestPromotion != null) {
+        if (cheapestPromotion == null) {
+            this.total = AbstractPromotion.calculateOriginalTotal(this.products);
+        } else {
             this.appliedPromotion = cheapestPromotion.getName();
             this.total = cheapestPromotion.calculateTotal(this.products);
             //If cheapest promotion is per product, applies discount in every product
             if (cheapestPromotion.isPerProduct()) {
                 cheapestPromotion.applyPerProduct(this.products);
             }
-        } else {
-            this.total = AbstractPromotion.calculateOriginalTotal(this.products);
         }
 
         return this.total;
