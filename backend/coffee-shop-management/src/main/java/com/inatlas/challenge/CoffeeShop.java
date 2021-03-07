@@ -24,6 +24,10 @@ public class CoffeeShop {
      */
     private static CoffeeShop coffeeShopInstance;
     /**
+     * Coffee Shop id
+     */
+    private int coffeeShopId;
+    /**
      * List of coffee shop clients
      */
     private List<Client> clients;
@@ -39,7 +43,7 @@ public class CoffeeShop {
 
     /**
      * Constructor to assign a client list
-     * @param clients client list to be initializated
+     * @param clients client list to be initialized
      */
     public CoffeeShop(final List<Client> clients) {
         this.clients = clients;
@@ -54,8 +58,17 @@ public class CoffeeShop {
     public static synchronized CoffeeShop getInstance() {
         if (coffeeShopInstance == null) {
             coffeeShopInstance = new CoffeeShop();
+            coffeeShopInstance.setCoffeeShopId(coffeeShopInstance.hashCode());
         }
         return coffeeShopInstance;
+    }
+
+    public int getCoffeeShopId() {
+        return this.coffeeShopId;
+    }
+
+    public void setCoffeeShopId(int coffeeShopId) {
+        this.coffeeShopId = coffeeShopId;
     }
 
     /**
@@ -64,6 +77,25 @@ public class CoffeeShop {
      */
     public List<Client> getClients() {
         return clients;
+    }
+
+    /**
+     * Method to get the client with the id given by parameter
+     * @param clientId client id
+     * @return the client found in the list
+     */
+    public Client getClient(int clientId) {
+        Client client = null;
+        if (clients != null && !clients.isEmpty()) {
+            List<Client> clientList = clients.stream()
+                    .filter(c -> c.getClientId() == clientId)
+                    .collect(Collectors.toList());
+            if (clientList != null && !clientList.isEmpty()) {
+                client = clientList.get(0);
+            }
+        }
+
+        return client;
     }
 
     /**
@@ -85,9 +117,13 @@ public class CoffeeShop {
 
     /**
      * Method to add a new client to the coffee shop
+     * @return the new client
      */
-    public void registerNewClient() {
-        clients.add(new Client());
+    public Client registerNewClient() {
+        Client newClient = new Client();
+        clients.add(newClient);
+
+        return newClient;
     }
 
     /**
@@ -203,7 +239,11 @@ public class CoffeeShop {
                     );
 
             //Calculate and set the average
-            average.set(CoffeeShopUtils.formatDouble(average.get() / (double)totalDailyClients.get()));
+            if (totalDailyClients.get() == 0.0) {
+                average.set(0.0);
+            } else {
+                average.set(CoffeeShopUtils.formatDouble(average.get() / (double) totalDailyClients.get()));
+            }
         }
 
         return average.get();

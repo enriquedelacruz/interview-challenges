@@ -15,6 +15,11 @@ import java.util.List;
 public class Order {
 
     /**
+     * Order id
+     */
+    private int orderId;
+
+    /**
      * Product list of the order
      */
     private List<Product> products;
@@ -40,9 +45,18 @@ public class Order {
         this.products = new ArrayList<>();
         this.total = 0.0;
         this.date = new Date();
+        this.orderId = this.hashCode();
     }
 
     //Getters and Setters
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
 
     /**
      * Getter method to get the product list of the order

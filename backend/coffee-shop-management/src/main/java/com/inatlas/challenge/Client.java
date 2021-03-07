@@ -11,6 +11,11 @@ import java.util.stream.Collectors;
 public class Client {
 
     /**
+     * Client Id
+     */
+    private int clientId;
+
+    /**
      * Order list of the client
      */
     private List<Order> orders;
@@ -23,9 +28,18 @@ public class Client {
     public Client() {
         this.orders = new ArrayList<>();
         this.orders.add(new Order()); //Initialize with the first order
+        this.clientId = this.hashCode();
     }
 
     //Getters and Setters
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
+    }
 
     /**
      * Getter method to get the order list
@@ -34,6 +48,26 @@ public class Client {
     public List<Order> getOrders() {
         return orders;
     }
+
+    /**
+     * Method to find an order by id
+     * @param orderId order id
+     * @return the order
+     */
+    public Order getOrder(int orderId) {
+        Order order = null;
+        if (orders != null && !orders.isEmpty()) {
+            List<Order> orderList = orders.stream()
+                    .filter(c -> c.getOrderId() == orderId)
+                    .collect(Collectors.toList());
+            if (orderList != null && !orderList.isEmpty()) {
+                order = orderList.get(0);
+            }
+        }
+
+        return order;
+    }
+
 
     //Public methods
 

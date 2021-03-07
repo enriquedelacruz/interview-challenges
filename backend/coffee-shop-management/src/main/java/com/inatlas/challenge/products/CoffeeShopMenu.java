@@ -6,8 +6,7 @@ import com.inatlas.challenge.promotion.EspressoPromotion;
 import com.inatlas.challenge.promotion.TotalAmountPromotion;
 import com.inatlas.challenge.promotion.TotalProductsPromotion;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class that represents the menu of the coffee shop
@@ -57,6 +56,13 @@ public class CoffeeShopMenu {
         public double getPrice() {
             return price;
         }
+
+        public HashMap toJson() {
+            HashMap map = new HashMap();
+            map.put("name", name);
+            map.put("price", price);
+            return map;
+        }
     }
 
     /**
@@ -84,6 +90,14 @@ public class CoffeeShopMenu {
     public static void printMenu() {
         // Print whole menu
         Printer.getInstance().printMenu();
+    }
+
+    public static HashMap toJson() {
+        HashMap map = new HashMap();
+        map.put("products", Arrays.stream(MenuProduct.values()).map(mp -> mp.toJson()));
+        map.put("availablePromotions", CoffeeShopMenu.getAvailablePromotions());
+
+        return map;
     }
 
 }
